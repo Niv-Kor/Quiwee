@@ -13,7 +13,7 @@ public class Address {
 	 
 	public void setCountry(String c) { country = c; }
 	public void setCity(String c) { city = c; }
-	public void setStreet(String s) { street = s; }
+	public void setStreet(String s) { street = s; } 
 	public void setStreetNum(int sn) { streetNum = sn; }
 	public String getCountry() { return country; }
 	public String getCity() { return city; } 
