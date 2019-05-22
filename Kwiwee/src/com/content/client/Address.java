@@ -10,7 +10,7 @@ public class Address {
 		this.street = new String(street);
 		this.streetNum = num;
 	}
-	
+	 
 	public void setCountry(String c) { country = c; }
 	public void setCity(String c) { city = c; }
 	public void setStreet(String s) { street = s; }
