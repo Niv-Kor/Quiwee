@@ -17,6 +17,6 @@ public class Address {
 	public void setStreetNum(int sn) { streetNum = sn; }
 	public String getCountry() { return country; }
 	public String getCity() { return city; }
-	public String getStreet() { return street; } 
+	public String getStreet() { return street; }
 	public int getStreetNum() { return streetNum; }
 }
