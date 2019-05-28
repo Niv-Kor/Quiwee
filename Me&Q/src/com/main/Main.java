@@ -9,6 +9,6 @@ public class Main
 		SQLModifier.init();
 		Window window = new Window();
 		StateManager.init(window);
-		StateManager.setState(Substate.DASHBOARD);
+		StateManager.setState(Substate.LOGIN);
 	}
 }

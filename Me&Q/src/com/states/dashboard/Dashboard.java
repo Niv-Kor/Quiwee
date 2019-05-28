@@ -50,12 +50,11 @@ public class Dashboard extends State
 		panes[0] = new Menu(this);
 		panes[0].setPreferredSize(new Dimension(Window.DIM.width - Calendar.DIM.width, Window.DIM.height));
 		panes[0].setBackground(new Color(36,134,215));
-		
-		setTab(Tabs.SERVICES);
 	}
 	
 	public void insertPanels() {
 		window.insert(panes[0], BorderLayout.WEST);
+		setTab(Tabs.SERVICES);
 	}
 	
 	public void setTab(Tabs tab) {
