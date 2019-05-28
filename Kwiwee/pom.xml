@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>Kwiwee</groupId>
+  <artifactId>Kwiwee</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>res</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+        <configuration>
+          <release>9</release>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <repositories>
+  <repository>
+	        <id>JavaUtilities-mvn-repo</id>
+	        <url>https://raw.github.com/Niv-Kor/JavaUtilities/mvn-repo/</url>
+	        <snapshots>
+	            <enabled>true</enabled>
+	            <updatePolicy>always</updatePolicy>
+	        </snapshots>
+	    </repository>
+  </repositories>
+  
+  <dependencies>
+  	<dependency>
+	      	<groupId>com.java.utilities</groupId>
+	      	<artifactId>java.util</artifactId>
+	      	<version>1.0.3.0</version>
+	      	<scope>Test</scope>
+		</dependency>
+  </dependencies>
+  
+</project>
