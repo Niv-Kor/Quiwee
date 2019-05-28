@@ -36,7 +36,6 @@ public class Calendar extends JPanel
 		this.menu = new JPanel(new BorderLayout());
 		menu.setPreferredSize(MENU_DIM);
 		menu.setBackground(Window.COLOR.brighter());
-		setPreferredSize(DIM);
 		
 		//view selector panel
 		this.viewSelector = new JPanel(new BorderLayout());
@@ -153,6 +152,7 @@ public class Calendar extends JPanel
 		
 		currentView = period.apply(menu, currentDate.getAddedWeeks());
 		add(currentView, BorderLayout.CENTER);
+		invalidate();
 		revalidate();
         repaint();
 	}

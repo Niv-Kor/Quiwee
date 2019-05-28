@@ -286,29 +286,28 @@ public class QueueDialog extends JFrame
 	}
 	
 	private void updateEndTimeMenu(String startTime) {
-		/*
 		endDropDown.removeAllItems();
 		boolean hasStartTime30 = startTime.charAt(3) == '3';
 		String minutes, excess;
-		int amount = (24 - startTime.getHour()) * 2 - 1;
+		//int amount = (24 - startTime.getHour()) * 2 - 1;
+		int amount = 15;
 
 		for (int i = 0, j = 1, currentHour; i < amount; i++, j++) {
 			//user chose start time XX:30
 			if (i == 0 && hasStartTime30) {
-				currentHour = startTime.getHour() + 1; 
+				//currentHour = startTime.getHour() + 1; 
 				minutes = "00";
 				i++;
 				j++;
 			}
 			else {
-				currentHour = startTime.getHour() + (j / 2);
+				//currentHour = startTime.getHour() + (j / 2);
 				minutes = (i % 2 == 0) ? "30" : "00";
 			}
 			
-			excess = (currentHour <= 9) ? "0" : "";
-			endDropDown.addItem(excess + currentHour + ":" + minutes);
+			//excess = (currentHour <= 9) ? "0" : "";
+			//endDropDown.addItem(excess + currentHour + ":" + minutes);
 		}
-		*/
 	}
 	
 	private void fixClientList(String keyword) {

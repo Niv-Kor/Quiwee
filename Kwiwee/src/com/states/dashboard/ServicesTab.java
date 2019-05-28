@@ -9,21 +9,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.database.SQLModifier;
-import com.main.User;
 import com.states.dashboard.calendar.Calendar;
-import com.tools.OptionLabel;
+import com.utility.OptionLabel;
 
 public class ServicesTab extends JPanel {
 	private final static int COLUMNS = 3;
@@ -132,44 +129,50 @@ public class ServicesTab extends JPanel {
 		save.setFont(FONT);
 		save.setForeground(Color.WHITE);
 		save.addMouseListener(new MouseAdapter() {
-
 			public void mousePressed(MouseEvent e) {
+				Queue<Integer> rowsToAdd = new LinkedList<Integer>();
 				String query;
+				boolean add;
 				
-				//TODO
-				/*
-				 * check that the row is full with data
-				 */
-				
-				try {
-					/*
-					 * UPDATE services
-					 * set x = y,
-					 * x = y,
-					 * x = y;
-					 */
-					
-					query =  "UP INTO services(service_id, name, time, price) "
-							+ "VALUES ( "
-							+ table.getValueAt(0,0) + ", " + table.getValueAt(1,0) + ", "
-							+ table.getValueAt(2,0) + ")";
-					
-					SQLModifier.write(query);
+				for (int i = 0; i < table.getRowCount(); i++) {
+					add = true;
+					for (int j = 0; j < columns.length; j++) {
+						String value = (String) table.getValueAt(i, j);
+						if (value == null || value.equals("")) {
+							add = false;
+							break;
+						}
+					}
+					if (add) rowsToAdd.add(i);
 				}
-				catch (SQLException e1) {
-					query =  "UP INTO services(service_id, name, time, price) "
-							+ "VALUES ( "
-							+ table.getValueAt(0,0) + ", " + table.getValueAt(1,0) + ", "
-							+ table.getValueAt(2,0) + ")";
+				
+				while(!rowsToAdd.isEmpty()) {
+					int row = rowsToAdd.poll();
+					
+					query = "SELECT name "
+						  + "FROM services "
+						  + "WHERE name = '" + table.getValueAt(row, 0) + "'";
+					
+					String rowName = SQLModifier.readVARCHAR(query, "name");
+					if (rowName != null && !rowName.equals("")) {
+						query = "UPDATE services "
+								+ "SET time = " + table.getValueAt(row, 1) + ", "
+								+ "price = " + table.getValueAt(row, 2) + " "
+								+ "WHERE name = '" + table.getValueAt(row, 0) + "'";
+					}
+					else {
+						query =  "INSERT INTO services(name, time, price) "
+								+ "VALUES ("
+								+ "'" + table.getValueAt(row, 0) + "', " + table.getValueAt(row, 1) + ", "
+								+ table.getValueAt(row, 2) + ")";
+					}
 					
 					try { SQLModifier.write(query); }
-					catch(SQLException e2) {
-						System.err.println("Couldn't update or insert the new data from some reason.");
-						e2.printStackTrace();
-					}
+					catch(Exception e1) { e1.printStackTrace(); }
+					
 				}
 			}
-	});
+		});
 	}
 		
 	

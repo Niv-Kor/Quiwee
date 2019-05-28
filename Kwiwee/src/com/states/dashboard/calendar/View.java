@@ -267,7 +267,6 @@ public class View extends JPanel
 		if (dp == null) {
 			dp = new CalendarGrid(d, row, col);
 			datedPanels.put(d.hashCode(), dp);
-			System.out.println("created " + d);
 		}
 		
 		return dp;

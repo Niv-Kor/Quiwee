@@ -32,6 +32,8 @@ public class Window extends JFrame {
 		pack();
 	}
 	
+	public JPanel getMainPanel() { return mainPanel; }
+	
 	public void insert(JPanel panel, String location) {
 		try { mainPanel.add(panel, location); }
 		catch(IllegalArgumentException e) {

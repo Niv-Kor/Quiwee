@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Panel;
 import java.util.concurrent.Callable;
 
 import javax.swing.JPanel;
@@ -12,6 +13,7 @@ import javax.swing.border.EtchedBorder;
 
 import com.states.StateManager;
 import com.states.StateManager.Substate;
+import com.states.dashboard.Dashboard.Tabs;
 import com.utility.OptionLabel;
 
 public class Menu extends JPanel
@@ -22,16 +24,16 @@ public class Menu extends JPanel
 	private OptionLabel settings, services, clients, logout;
 	private GridBagConstraints gbc;
 
-	public Menu () {
+	public Menu(Dashboard dashboard) {
 		super(new GridBagLayout());
 		setBorder(new EtchedBorder(EtchedBorder.LOWERED));
 		
 		this.settings = new OptionLabel("Settings");
 		settings.setForeground(Color.WHITE);
 		settings.setFont(LABEL_FONT);
-	
 		settings.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
+				dashboard.setTab(Tabs.CALENDAR);
 				services.release();
 				clients.release();
 				logout.release();
@@ -45,6 +47,7 @@ public class Menu extends JPanel
 
 		services.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
+				dashboard.setTab(Tabs.SERVICES);
 				settings.release();
 				clients.release();
 				logout.release();
@@ -58,6 +61,7 @@ public class Menu extends JPanel
 
 		clients.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
+				dashboard.setTab(Tabs.SERVICES);
 				settings.release();
 				services.release();
 				logout.release();

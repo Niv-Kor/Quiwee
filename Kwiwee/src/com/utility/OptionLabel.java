@@ -48,8 +48,7 @@ public class OptionLabel extends JLabel implements MouseListener
 	public void mousePressed(MouseEvent arg0) {
 		clicked = !clicked;
 		super.setForeground(selectColor);
-		
-		if (func != null) {
+  		if (func != null) {
 			try { func.call(); }
 			catch (Exception e) { e.printStackTrace(); }
 		}

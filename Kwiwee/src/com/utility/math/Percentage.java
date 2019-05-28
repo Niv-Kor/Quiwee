@@ -2,6 +2,8 @@ package com.utility.math;
 
 import java.awt.Dimension;
 
+import com.main.Window;
+
 public class Percentage
 {
 	public final static int MIN = 0, MAX = 100;

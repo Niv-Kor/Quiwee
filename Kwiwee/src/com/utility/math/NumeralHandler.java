@@ -26,7 +26,7 @@ public class NumeralHandler
 		return counter;
 	}
 	
-	public static Dimension max(Dimension a, Dimension b) {
+	public static Dimension maxDimension(Dimension a, Dimension b) {
 		double aSize = a.width * a.height;
 		double bSize = b.width * b.height;
 		
