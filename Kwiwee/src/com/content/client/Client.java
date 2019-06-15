@@ -1,9 +1,10 @@
 package com.content.client;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import com.content.Saveable;
-import com.database.SQLModifier;
 import com.main.User;
+import javaNK.util.data.MysqlModifier;
 
 public class Client implements Saveable {
 	private String name, phone;
@@ -16,19 +17,19 @@ public class Client implements Saveable {
 		save();
 	}
 	
-	//import client from db
-	public Client(String name, String phone) {
+	//import client from database
+	public Client(String name, String phone) throws SQLException {
 		String query = "SELECT * "
 					 + "FROM clients c "
 					 + "WHERE c.user_key = '" + User.getKey() + "' "
 			 		 + "AND c.full_name = '"+ name + "' "
 			 		 + "AND c.phone_number = '"+ phone + "';";
 		
-		String country = SQLModifier.readVARCHAR(query, "country");
-		String city = SQLModifier.readVARCHAR(query, "city");
-		String street = SQLModifier.readVARCHAR(query, "street");
-		int streetNum = SQLModifier.readINT(query, "st_num");
-		Date joined = SQLModifier.readDATE(query, "join_date");
+		String country = MysqlModifier.readVARCHAR(query, "country");
+		String city = MysqlModifier.readVARCHAR(query, "city");
+		String street = MysqlModifier.readVARCHAR(query, "street");
+		int streetNum = MysqlModifier.readINT(query, "st_num");
+		Date joined = MysqlModifier.readDATE(query, "join_date");
 		
 		init(name, phone, new Address(country, city, street, streetNum), joined);
 		saved = true;
@@ -62,8 +63,11 @@ public class Client implements Saveable {
 			      + "join_date = " + joinDate + ";";
 		}
 		
-		SQLModifier.write(query);
-		saved = true;		
+		try {
+			MysqlModifier.write(query);
+			saved = true;
+		}
+		catch (SQLException e) { saved = false; }
 	}
 	
 	public void setName(String n) {

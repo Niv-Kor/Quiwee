@@ -3,6 +3,39 @@
   <groupId>Kwiwee</groupId>
   <artifactId>Kwiwee</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  
+  <repositories>
+  	<repository>
+		<id>com.java.utilities</id>
+	    <name>java.util Maven Plugin</name>
+	   	<url>https://github.com/Niv-Kor/JavaUtilities.git</url>
+	</repository>
+  </repositories>
+  
+  <dependencies>
+  		<dependency>
+	      	<groupId>com.java.utilities</groupId>
+	      	<artifactId>java.util</artifactId>
+	      	<version>1.0.3.0</version>
+	      	<scope>System</scope>
+		</dependency>
+		
+		<dependency>
+	      	<groupId>GameAlgorithms</groupId>
+	      	<artifactId>GameAlgorithms</artifactId>
+	      	<version>0.0.1-SNAPSHOT</version>
+	      	<scope>System</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.miglayout/miglayout -->
+		<dependency>
+		    <groupId>com.miglayout</groupId>
+		    <artifactId>miglayout</artifactId>
+		    <version>3.7.4</version>
+		</dependency>
+		
+  </dependencies>
+  
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
@@ -16,32 +49,11 @@
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.7.0</version>
         <configuration>
           <release>9</release>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  
-  <repositories>
-  <repository>
-	        <id>JavaUtilities-mvn-repo</id>
-	        <url>https://raw.github.com/Niv-Kor/JavaUtilities/mvn-repo/</url>
-	        <snapshots>
-	            <enabled>true</enabled>
-	            <updatePolicy>always</updatePolicy>
-	        </snapshots>
-	    </repository>
-  </repositories>
-  
-  <dependencies>
-  	<dependency>
-	      	<groupId>com.java.utilities</groupId>
-	      	<artifactId>java.util</artifactId>
-	      	<version>1.0.3.0</version>
-	      	<scope>Test</scope>
-		</dependency>
-  </dependencies>
-  
 </project>

@@ -1,14 +1,17 @@
 package com.main;
-import com.database.SQLModifier;
-import com.states.StateManager;
-import com.states.StateManager.Substate;
+import com.GUI.states.StateManager;
+import com.GUI.states.StateManager.Substate;
+import javaNK.util.data.MysqlModifier;
 
-public class Main
-{
+public class Main {
 	public static void main(String[] args) {
-		SQLModifier.init();
-		Window window = new Window();
-		StateManager.init(window);
-		StateManager.setState(Substate.LOGIN);
+		//connect to database
+		String host = "sql7.freemysqlhosting.net";
+		String schema = "sql7287323";
+		String username = "sql7287323";
+		String password = "EQjYc7Nidj";
+		MysqlModifier.connect(host, schema, username, password);
+		
+		StateManager.setState(Substate.ENTRY);
 	}
 }
