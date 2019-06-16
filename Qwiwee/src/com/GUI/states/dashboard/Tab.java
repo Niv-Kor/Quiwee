@@ -12,17 +12,20 @@ import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
+
 import com.GUI.ColorConstants;
 import com.GUI.MainWindow;
+
 import javaNK.util.GUI.swing.components.InteractiveIcon;
 import javaNK.util.files.FontHandler;
 import javaNK.util.files.FontHandler.FontStyle;
 import javaNK.util.files.ImageHandler;
-import javaNK.util.math.Percentage;
+import javaNK.util.math.DimensionalHandler;
 
 public abstract class Tab extends JPanel
 {
@@ -40,7 +43,7 @@ public abstract class Tab extends JPanel
 	}
 	
 	private static final long serialVersionUID = 5140628779217675584L;
-	public static final Dimension DIM = Percentage.createDimension(MainWindow.DIM, 80, 100);
+	public static final Dimension DIM = DimensionalHandler.adjust(MainWindow.DIM, 80, 100);
 	protected static final Font DESCRIPTION_FONT = FontHandler.load("Poppins", FontStyle.PLAIN, 16);
 	private static final Font TITLE_FONT = FontHandler.load("Ubuntu", FontStyle.PLAIN, 28);
 	
@@ -58,12 +61,12 @@ public abstract class Tab extends JPanel
 		
 		//north header panel
 		this.headerPanel = new JPanel(new BorderLayout());
-		headerPanel.setPreferredSize(Percentage.createDimension(DIM, 100, 30));
+		headerPanel.setPreferredSize(DimensionalHandler.adjust(DIM, 100, 30));
 		headerPanel.setOpaque(false);
 		
 		//title
 		JPanel titlePanel = new JPanel(new GridBagLayout());
-		titlePanel.setPreferredSize(Percentage.createDimension(headerPanel.getPreferredSize(), 100, 50));
+		titlePanel.setPreferredSize(DimensionalHandler.adjust(headerPanel.getPreferredSize(), 100, 50));
 		titlePanel.setOpaque(false);
 		headerPanel.add(titlePanel, BorderLayout.NORTH);
 		
@@ -75,7 +78,7 @@ public abstract class Tab extends JPanel
 		
 		//description
 		JPanel descriptionPanel = new JPanel(new GridBagLayout());
-		descriptionPanel.setPreferredSize(Percentage.createDimension(headerPanel.getPreferredSize(), 100, 50));
+		descriptionPanel.setPreferredSize(DimensionalHandler.adjust(headerPanel.getPreferredSize(), 100, 50));
 		descriptionPanel.setOpaque(false);
 		headerPanel.add(descriptionPanel, BorderLayout.CENTER);
 		
@@ -98,14 +101,14 @@ public abstract class Tab extends JPanel
 		
 		//button panel
 		this.buttonPanel = new JPanel(new GridBagLayout());
-		buttonPanel.setPreferredSize(Percentage.createDimension(DIM, 20, 70));
+		buttonPanel.setPreferredSize(DimensionalHandler.adjust(DIM, 20, 70));
 		buttonPanel.setOpaque(false);
 		addButtons();
 		add(buttonPanel, BorderLayout.EAST);
 		
 		//main panel
 		this.panel = new JPanel(new GridBagLayout());
-		panel.setPreferredSize(Percentage.createDimension(DIM, 100, 70));
+		panel.setPreferredSize(DimensionalHandler.adjust(DIM, 100, 70));
 		panel.setOpaque(false);
 		add(panel, BorderLayout.CENTER);
 	}

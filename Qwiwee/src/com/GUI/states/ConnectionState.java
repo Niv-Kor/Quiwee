@@ -19,7 +19,7 @@ import javaNK.util.GUI.swing.containers.Window;
 import javaNK.util.GUI.swing.state_management.State;
 import javaNK.util.files.FontHandler;
 import javaNK.util.files.FontHandler.FontStyle;
-import javaNK.util.math.Percentage;
+import javaNK.util.math.DimensionalHandler;
 
 public abstract class ConnectionState extends State
 {
@@ -32,9 +32,9 @@ public abstract class ConnectionState extends State
 	
 	public ConnectionState(Window window) {
 		super(window, 3);
-		createPanel(new GridBagLayout(), Percentage.createDimension(window.getDimension(), 100, 20), null);
-		createPanel(new GridBagLayout(), Percentage.createDimension(window.getDimension(), 100, 60), null);
-		createPanel(new GridBagLayout(), Percentage.createDimension(window.getDimension(), 100, 20), null);
+		createPanel(new GridBagLayout(), DimensionalHandler.adjust(window.getDimension(), 100, 20), null);
+		createPanel(new GridBagLayout(), DimensionalHandler.adjust(window.getDimension(), 100, 60), null);
+		createPanel(new GridBagLayout(), DimensionalHandler.adjust(window.getDimension(), 100, 20), null);
 		
 		//labels
 		JLabel title = new JLabel(getTitle());

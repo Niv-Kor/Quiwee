@@ -17,7 +17,7 @@ import com.GUI.states.dashboard.calendar.View.Period;
 
 import javaNK.util.GUI.swing.components.InteractiveIcon;
 import javaNK.util.GUI.swing.components.InteractiveLabel;
-import javaNK.util.math.Percentage;
+import javaNK.util.math.DimensionalHandler;
 
 public class CalendarTab extends JPanel
 {
@@ -108,7 +108,7 @@ public class CalendarTab extends JPanel
 		
 		//west panel
 		JPanel westPane = new JPanel(new BorderLayout());
-		westPane.setPreferredSize(Percentage.createDimension(MENU_DIM, 50, 100));
+		westPane.setPreferredSize(DimensionalHandler.adjust(MENU_DIM, 50, 100));
 		westPane.setOpaque(false);
 		
 		Date saturday = Date.now();
@@ -118,14 +118,14 @@ public class CalendarTab extends JPanel
 		currentDate.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
 		
 		JPanel dateAssistPane = new JPanel(new BorderLayout());
-		dateAssistPane.setPreferredSize(Percentage.createDimension(westPane.getPreferredSize(), 65, 100));
+		dateAssistPane.setPreferredSize(DimensionalHandler.adjust(westPane.getPreferredSize(), 65, 100));
 		dateAssistPane.setOpaque(false);
 		dateAssistPane.add(currentDate, BorderLayout.LINE_START);
 		
 		westPane.add(dateAssistPane, BorderLayout.EAST);
 		
 		JPanel westIconsAssistPane = new JPanel(new GridBagLayout());
-		westIconsAssistPane.setPreferredSize(Percentage.createDimension(westPane.getPreferredSize(), 35, 100));
+		westIconsAssistPane.setPreferredSize(DimensionalHandler.adjust(westPane.getPreferredSize(), 35, 100));
 		westIconsAssistPane.setBackground(Color.ORANGE);
 		westIconsAssistPane.setOpaque(false);
 		
@@ -161,7 +161,7 @@ public class CalendarTab extends JPanel
 		
 		//center panel
 		JPanel centerPane = new JPanel(new GridBagLayout());
-		centerPane.setPreferredSize(Percentage.createDimension(MENU_DIM, 50, 100));
+		centerPane.setPreferredSize(DimensionalHandler.adjust(MENU_DIM, 50, 100));
 		centerPane.setOpaque(false);
 		
 		gbc.gridx = 0;

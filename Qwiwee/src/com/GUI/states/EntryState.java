@@ -13,7 +13,7 @@ import com.GUI.states.StateManager.Substate;
 import javaNK.util.GUI.swing.components.InteractiveLabel;
 import javaNK.util.GUI.swing.containers.Window;
 import javaNK.util.GUI.swing.state_management.State;
-import javaNK.util.math.Percentage;
+import javaNK.util.math.DimensionalHandler;
 
 public class EntryState extends State
 {
@@ -22,8 +22,8 @@ public class EntryState extends State
 	public EntryState(Window window) {
 		super(window, 2);
 		
-		createPanel(new GridBagLayout(), Percentage.createDimension(window.getDimension(), 100, 50), null);
-		createPanel(new GridBagLayout(), Percentage.createDimension(window.getDimension(), 100, 50), null);
+		createPanel(new GridBagLayout(), DimensionalHandler.adjust(window.getDimension(), 100, 50), null);
+		createPanel(new GridBagLayout(), DimensionalHandler.adjust(window.getDimension(), 100, 50), null);
 		
 		JLabel welcome = new JLabel ("Welcome to Qwiwee!");
 		welcome.setForeground(Color.magenta);
