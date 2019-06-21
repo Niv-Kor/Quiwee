@@ -1,8 +1,8 @@
 package com.content.client;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import com.content.MysqlDataRow;
 import com.main.User;
+import javaNK.util.data.MysqlDataRow;
 import javaNK.util.data.MysqlModifier;
 
 public class Client extends MysqlDataRow

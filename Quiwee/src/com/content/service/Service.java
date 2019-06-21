@@ -1,7 +1,7 @@
 package com.content.service;
 import java.sql.SQLException;
-import com.content.MysqlDataRow;
 import com.main.User;
+import javaNK.util.data.MysqlDataRow;
 import javaNK.util.data.MysqlModifier;
 
 public class Service extends MysqlDataRow

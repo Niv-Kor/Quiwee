@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 import com.GUI.states.StateManager.Substate;
 import com.main.User;
 import javaNK.util.GUI.swing.containers.Window;
-import javaNK.util.IO.StringVarifier;
+import javaNK.util.IO.StringVerifier;
 import javaNK.util.data.MysqlModifier;
 import javaNK.util.files.ImageHandler;
 
@@ -42,15 +42,15 @@ public class RegisterState extends AuthenticationState
 		String rep = repeatField.getDecodedPassword();
 		
 		//fail
-		if (!StringVarifier.varifyEmail(email)) {
+		if (!StringVerifier.verifyEmail(email)) {
 			fail("Email is illegal.");
 			return;
 		}
-		if (!StringVarifier.varify(name)) {
+		if (!StringVerifier.verify(name)) {
 			fail("Name is illegal.");
 			return;
 		}
-		else if (!StringVarifier.varifyPassword(pass, 8, 20)) {
+		else if (!StringVerifier.verifyPassword(pass, 8, 20)) {
 			if (pass.length() < 8 || pass.length() > 20)
 				fail("Password must be between 8-20 characters long.");
 			else
