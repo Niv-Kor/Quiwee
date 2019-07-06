@@ -27,7 +27,10 @@ public abstract class AuthenticationState extends State
 	protected static class AuthLabel extends JLabel
 	{
 		private static final long serialVersionUID = 9143176152684551671L;
-
+		
+		/**
+		 * @param name - The lable's name
+		 */
 		public AuthLabel(String name) {
 			super(name + ":");
 			setForeground(ColorConstants.TEXT_COLOR_DARK);
@@ -41,8 +44,11 @@ public abstract class AuthenticationState extends State
 		private static final Dimension DIM = new Dimension(200, 30);
 		private static final Border BORDER = new MatteBorder(1, 1, 1, 1, Color.BLACK);
 		
-		public AuthField(String name) {
-			super(name);
+		/**
+		 * @param defText - The default text inside the field
+		 */
+		public AuthField(String defText) {
+			super(defText);
 			setPreferredSize(DIM);
 			setBorder(BORDER);
 		}
@@ -147,8 +153,23 @@ public abstract class AuthenticationState extends State
 		g.fillRect(10, 80, windowDim.width, 6);
 	}
 	
+	/**
+	 * @return the title of the state.
+	 */
 	protected abstract String getTitle();
+	
+	/**
+	 * @return the text inside the action button.
+	 */
 	protected abstract String getActionName();
+	
+	/**
+	 * @return the icon that appears next to the title.
+	 */
 	protected abstract ImageIcon getActionIcon();
+	
+	/**
+	 * This method is the action to perform when the action button is pressed. 
+	 */
 	protected abstract void buttonAction();
 }

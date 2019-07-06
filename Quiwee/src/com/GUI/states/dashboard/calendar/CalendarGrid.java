@@ -6,29 +6,35 @@ import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.time.LocalDateTime;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.MatteBorder;
 import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
+import com.GUI.windows.QueueDialog;
+import com.controllers.QueuesController;
+import com.data.objects.Queue;
 
 public class CalendarGrid extends JPanel implements MouseListener
 {
 	private static final long serialVersionUID = 3709458352878645312L;
 	private static final Border BORDER = new EtchedBorder(EtchedBorder.LOWERED);
 	
-	private Date date;
+	private LocalDateTime date;
 	private Color originColor;
 	private int row, col;
 	private boolean pressed, occupied, firstRow;
 	private String occupyingName;
+	private QueuesController controller;
 	private Queue queue;
 	
-	public CalendarGrid(Date date, int row, int col) {
+	public CalendarGrid(LocalDateTime date, int row, int col) {
 		super(new BorderLayout());
 		
-		this.date = new Date(date);
+		this.controller = new QueuesController();
+		this.date = date;
 		this.row = row;
 		this.col = col;
 		setBorder(BORDER);
@@ -53,7 +59,7 @@ public class CalendarGrid extends JPanel implements MouseListener
 		QueueDialog dialog = new QueueDialog(this, date);
 		
 		//insert info from the original first row queue
-		if (isOccupied()) dialog.inputQueueInfo(getMainQueueGrid().getQueue());
+		if (isOccupied()) dialog.inputQueueInfo(getQueue());
 		
 		press(true);
 	}
@@ -61,16 +67,16 @@ public class CalendarGrid extends JPanel implements MouseListener
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		if (!pressed) {
-			View.Period.highlightHour(row);
-			View.Period.highlightDay(col);
+			TimePeriod.highlightHour(row);
+			TimePeriod.highlightDay(col);
 			colorize(ColorConstants.TEXT_COLOR_SELECTED);
 		}
 	}
 	
 	public void mouseExited(MouseEvent e) {
 		if (!pressed) {
-			View.Period.highlightHour(-1);
-			View.Period.highlightDay(-1);
+			TimePeriod.highlightHour(-1);
+			TimePeriod.highlightDay(-1);
 			colorize(originColor);
 		}
 	}
@@ -84,9 +90,8 @@ public class CalendarGrid extends JPanel implements MouseListener
 	private CalendarGrid getMainQueueGrid() {
 		if (firstRow || queue == null) return this;
 		else {
-			Date tempDate = new Date(date);
-			tempDate.decrementMinute(30);
-			return View.requestGrid(tempDate, row - 1, col).getMainQueueGrid();
+			LocalDateTime tempDate = date.plusMinutes(30);
+			return CalendarTimeView.requestGrid(tempDate, row - 1, col).getMainQueueGrid();
 		}
 	}
 	
@@ -101,11 +106,11 @@ public class CalendarGrid extends JPanel implements MouseListener
 			getMainQueueGrid().removeQueue();
 			return;
 		}
-		else removeQueue(queue);
+		else removeQueue(queue.getDuration());
 	}
 	
-	private void removeQueue(Queue q) {
-		if (!occupied || q.getDuration() <= 0) return;
+	private void removeQueue(int duration) {
+		if (!occupied || duration <= 0) return;
 		
 		super.setBorder(BORDER);
 		setOpaque(true);
@@ -113,42 +118,38 @@ public class CalendarGrid extends JPanel implements MouseListener
 		occupied = false;
 		firstRow = false;
 		
-		//q.delete();
-		Queue draggedQueue = new Queue(q);
+		LocalDateTime queueDate = queue.getStartTime().plusMinutes(queue.getDuration() - (duration - 30));
+		controller.delete(queue);
 		queue = null;
-		Date queueDate = new Date(draggedQueue.getStartTime());
-		queueDate.incrementMinute(30);
-		draggedQueue.setStartTime(queueDate);
-		View.requestGrid(queueDate, row + 1, col).removeQueue(draggedQueue);
+		
+		CalendarTimeView.requestGrid(queueDate, row + 1, col).removeQueue(duration - 30);
 	}
 	
-	public void addQueue(Queue q, int overallDuration) {
-		int queueDuration = q.getDuration();
+	public void addQueue(Queue q, int currentDuration) {
+		//after last grid - end condition for the recursion
+		if (occupied || currentDuration <= 0) return;
+		
 		Insets insets = new Insets(0, 1, 0, 1);
 
 		//decide which kind of border should the grid possess.
 		//first row of queue - write down client name
-		if (queueDuration == overallDuration) {
+		if (currentDuration == q.getDuration()) {
 			String clientName = q.getClient().getName();
 			occupyingName = clientName.substring(0, clientName.indexOf(" "));
 			firstRow = true;
 			insets.top = 1;
 		}
-		//after last grid - end condition for the recursion
-		else if (queueDuration <= 0) return;
-		//any row during the queue
-		if (queueDuration == 30) insets.bottom = 1;
 		
+		//any row during the queue
+		if (currentDuration == 30) insets.bottom = 1;
+		
+		LocalDateTime queueStart = q.getStartTime().plusMinutes(q.getDuration() - (currentDuration - 30));
 		setBorder(new MatteBorder(insets, Color.BLACK));
 		setOpaque(false);
 		occupied = true;
 		queue = q;
 		
-		Queue draggedQueue = new Queue(q);
-		Date queueDate = new Date(draggedQueue.getStartTime());
-		queueDate.incrementMinute(30);
-		draggedQueue.setStartTime(queueDate);
-		View.requestGrid(queueDate, row + 1, col).addQueue(draggedQueue, overallDuration);
+		CalendarTimeView.requestGrid(queueStart, row + 1, col).addQueue(q, currentDuration - 30);
 	}
 	
 	@Override
@@ -170,8 +171,8 @@ public class CalendarGrid extends JPanel implements MouseListener
 	
 	public Queue getQueue() { return queue; }
 	public boolean isOccupied() { return occupied; }
-	public void setDate(Date d) { date = d; }
-	public Date getDate() { return date; }
+	public void setDate(LocalDateTime d) { date = d; }
+	public LocalDateTime getDate() { return date; }
 	public boolean isPressed() { return pressed; }
 	public Color getOriginColor() { return (originColor != null) ? originColor : getBackground(); }
 }

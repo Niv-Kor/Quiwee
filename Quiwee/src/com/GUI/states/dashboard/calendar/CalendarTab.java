@@ -5,16 +5,25 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.Callable;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
 import com.GUI.states.dashboard.Tab;
-import com.GUI.states.dashboard.calendar.View.Period;
+import com.controllers.QueuesController;
+import com.data.MysqlLoader;
+import com.data.objects.Client;
+import com.data.tables.QueuesTable;
 import javaNK.util.GUI.swing.components.InteractiveIcon;
 import javaNK.util.GUI.swing.components.InteractiveLabel;
 import javaNK.util.math.DimensionalHandler;
+import javaNK.util.math.NumeralHandler;
 
 public class CalendarTab extends JPanel
 {
@@ -22,58 +31,56 @@ public class CalendarTab extends JPanel
 	{
 		private static final long serialVersionUID = -6950255606994746339L;
 		
-		private Date date;
+		private LocalDateTime date;
 		private int addedWeeks;
 		
-		public CurrentDate(Date date) {
-			this.date = new Date(date);
+		public CurrentDate(LocalDateTime date) {
+			this.date = date;
 			this.addedWeeks = 0;
 			setDate(date, false);
 		}
 		
 		public void forward() {
-			date.incrementDay(7);
+			date = date.plusDays(7);
 			addedWeeks++;
 			setDate(date, false);
 		}
 		
 		public void backward() {
-			date.decrementDay(7);
+			date = date.minusDays(7);
 			addedWeeks--;
 			setDate(date, false);
 		}
 		
 		public void now() {
-			Date nearestSaturday = Date.now();
-			while (nearestSaturday.getDay() != Days.SATURDAY) nearestSaturday.incrementDay();
+			LocalDateTime nearestSaturday = LocalDateTime.now();
+			while (nearestSaturday.getDayOfWeek() != DayOfWeek.SATURDAY)
+				nearestSaturday = nearestSaturday.plusDays(1);
+			
 			setDate(nearestSaturday, true);
 		}
 		
-		public void setDate(Date d, boolean randomAccess) {
-			date = new Date(d);
+		public void setDate(LocalDateTime d, boolean randomAccess) {
+			date = d;
 			//move the date to the nearest Saturday
-			while (date.getDay() != Days.SATURDAY) date.incrementDay();
+			while (date.getDayOfWeek() != DayOfWeek.SATURDAY) date = date.plusDays(1);
 			
-			date.displayHour(false);
-			
-			Date prefix = new Date(date);
-			prefix.decrementDay(6);
-			
-			setText(prefix.toString() + " - " + date.toString());
+			LocalDateTime prefix = date.minusDays(6);
+			setText(formatDate(prefix) + "   to   " + formatDate(date));
 			
 			//count added weeks if date was set randomly at runtime
 			if (randomAccess) {
 				addedWeeks = 0;
-				Date now = Date.now();
-				Date pivot = new Date(d);
+				LocalDateTime now = LocalDateTime.now();
+				LocalDateTime pivot = d;
 				int counter = 0;
 				
 				//make hours and minutes irrelevant
-				pivot.setHour(now.getHour());
-				pivot.setMinutes(now.getMinutes());
+				pivot = pivot.withHour(now.getHour());
+				pivot = pivot.withMinute(now.getMinute());
 				
 				while (pivot.isAfter(now)) {
-					pivot.decrementDay();
+					pivot = pivot.minusDays(1);
 					
 					if (++counter == 7) {
 						addedWeeks++;
@@ -82,7 +89,7 @@ public class CalendarTab extends JPanel
 				}
 				
 				while (pivot.isBefore(now)) {
-					pivot.incrementDay();
+					pivot = pivot.plusDays(1);
 					
 					if (++counter == 7) {
 						addedWeeks--;
@@ -92,6 +99,17 @@ public class CalendarTab extends JPanel
 			}
 		}
 		
+		private String formatDate(LocalDateTime date) {
+			String dayOfWeek = date.getDayOfWeek().name();
+			dayOfWeek = dayOfWeek.charAt(0) + dayOfWeek.substring(1, dayOfWeek.length()).toLowerCase();
+			
+			String day = NumeralHandler.shiftRight(date.getDayOfMonth(), 2);
+			String month = NumeralHandler.shiftRight(date.getMonthValue(), 2);
+			String year = NumeralHandler.shiftRight(date.getYear(), 4);
+			
+			return dayOfWeek + ", " + day + "-" + month + "-" + year;
+		}
+		
 		public int getAddedWeeks() { return addedWeeks; }
 	}
 	
@@ -99,14 +117,16 @@ public class CalendarTab extends JPanel
 	public static final Dimension MENU_DIM = new Dimension(Tab.DIM.width, 80);
 	
 	private JPanel menu, viewSelector;
-	private View currentView;
+	private CalendarTimeView currentView;
 	private CurrentDate currentDate;
 	private InteractiveLabel daily, weekly;
+	private QueuesController controller;
 	
 	public CalendarTab() {
 		super(new BorderLayout());
 		setPreferredSize(Tab.DIM);
 		setBackground(Color.YELLOW);
+		this.controller = new QueuesController();
 		
 		this.menu = new JPanel(new BorderLayout());
 		menu.setPreferredSize(MENU_DIM);
@@ -123,24 +143,24 @@ public class CalendarTab extends JPanel
 		westPane.setPreferredSize(DimensionalHandler.adjust(MENU_DIM, 60, 100));
 		westPane.setOpaque(false);
 		
-		Date saturday = Date.now();
-		while (saturday.getDay() != Days.SATURDAY) saturday.incrementDay();
+		LocalDateTime saturday = LocalDateTime.now();
+		while (saturday.getDayOfWeek() != DayOfWeek.SATURDAY) saturday = saturday.plusDays(1);
 		
 		this.currentDate = new CurrentDate(saturday);
 		currentDate.setFont(FontConstants.SMALL_LABEL_FONT);
 		currentDate.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
 		
 		JPanel dateAssistPane = new JPanel(new BorderLayout());
-		dateAssistPane.setPreferredSize(DimensionalHandler.adjust(westPane.getPreferredSize(), 75, 100));
+		dateAssistPane.setPreferredSize(DimensionalHandler.adjust(westPane.getPreferredSize(), 80, 100));
 		dateAssistPane.setOpaque(false);
 		dateAssistPane.add(currentDate, BorderLayout.LINE_START);
 		westPane.add(dateAssistPane, BorderLayout.EAST);
 		
 		JPanel westIconsAssistPane = new JPanel(new GridBagLayout());
-		westIconsAssistPane.setPreferredSize(DimensionalHandler.adjust(westPane.getPreferredSize(), 25, 100));
+		westIconsAssistPane.setPreferredSize(DimensionalHandler.adjust(westPane.getPreferredSize(), 20, 100));
 		westIconsAssistPane.setOpaque(false);
 		
-		gbc.insets = new Insets(10, -30, 10, 10);
+		gbc.insets = new Insets(10, -10, 10, 10);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 		InteractiveIcon back = new InteractiveIcon("date_back.png");
@@ -180,9 +200,10 @@ public class CalendarTab extends JPanel
 		this.daily = new InteractiveLabel("Daily");
 		daily.setFont(FontConstants.SMALL_LABEL_FONT);
 		daily.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
+		daily.setSelectColor(ColorConstants.COLOR_2.brighter());
 		daily.setFunction(new Callable<Void>() {
 			public Void call() {
-				setView(Period.DAILY);
+				setTimeView(TimePeriod.DAILY);
 				weekly.release();
 				return null;
 			}
@@ -194,9 +215,11 @@ public class CalendarTab extends JPanel
 		this.weekly = new InteractiveLabel("Weekly");
 		weekly.setFont(FontConstants.SMALL_LABEL_FONT);
 		weekly.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
+		weekly.setSelectColor(ColorConstants.COLOR_2.brighter());
+		weekly.mousePressed(null);
 		weekly.setFunction(new Callable<Void>() {
 			public Void call() {
-				setView(Period.WEEKLY);
+				setTimeView(TimePeriod.WEEKLY);
 				daily.release();
 				return null;
 			}
@@ -219,16 +242,34 @@ public class CalendarTab extends JPanel
 		viewSelector.add(centerPane, BorderLayout.CENTER);
 		menu.add(viewSelector, BorderLayout.NORTH);
 		add(menu, BorderLayout.NORTH);
-		setView(Period.WEEKLY);
+		setTimeView(TimePeriod.WEEKLY);
+		
+		try { importQueues(); }
+		catch (SQLException e) { e.printStackTrace(); }
 	}
 	
-	public void setView(Period period) {
-		if (currentView == period.getView()) return;
+	private void setTimeView(TimePeriod period) {
+		if (currentView == period.getTimeView()) return;
 		if (currentView != null) remove(currentView);
 		
 		currentView = period.apply(menu, currentDate.getAddedWeeks());
 		add(currentView, BorderLayout.CENTER);
 		revalidate();
         repaint();
+	}
+	
+	private void importQueues() throws SQLException {
+		List<Object> clientPhoneNumber = MysqlLoader.pullAll(QueuesTable.CLIENT_PHONE);
+		List<Object> startTime = MysqlLoader.pullAll(QueuesTable.START_TIME);
+		
+		for (int i = 0; i < clientPhoneNumber.size(); i++) {
+			Client client;
+			LocalDateTime startTimeFormat = ((Timestamp) startTime.get(i)).toLocalDateTime();
+			
+			try { client = new Client((String) clientPhoneNumber.get(i)); }
+			catch (SQLException e) { continue; }
+			
+			controller.importQueue(client, startTimeFormat);
+		}
 	}
 }

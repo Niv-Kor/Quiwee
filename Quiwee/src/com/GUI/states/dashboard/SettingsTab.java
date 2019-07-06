@@ -3,59 +3,60 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
-
+import javax.swing.JOptionPane;
 import com.GUI.constants.ColorConstants;
+import com.main.User;
+import javaNK.util.GUI.swing.components.FocusField;
+import javaNK.util.IO.StringVerifier;
 
 public class SettingsTab extends Tab
 {
 	private static final long serialVersionUID = -2232661139446087215L;
 	private static final Dimension FIELD_DIM = new Dimension(180, 25);
 	
+	private FocusField currentPassF, newPassF, repeatF;
+	
 	public SettingsTab() {
-		//labels
-		gbc.insets = new Insets(10, -150, 10, 10);
+		super(false, false, true);
 		
+		//labels
 		JLabel currentPassLab = new JLabel("Current password");
 		currentPassLab.setForeground(ColorConstants.TEXT_COLOR_DARK);
 		currentPassLab.setFont(DESCRIPTION_FONT);
+		gbc.insets = new Insets(10, -150, 10, 10);
 		addComponent(currentPassLab, 0, 0);
 		
 		JLabel newPassLab = new JLabel("New password");
 		newPassLab.setForeground(ColorConstants.TEXT_COLOR_DARK);
 		newPassLab.setFont(DESCRIPTION_FONT);
+		gbc.insets.left = -125;
 		addComponent(newPassLab, 0, 1);
 		
 		JLabel repeatPassLab = new JLabel("Repeat password");
 		repeatPassLab.setForeground(ColorConstants.TEXT_COLOR_DARK);
 		repeatPassLab.setFont(DESCRIPTION_FONT);
-		addComponent(repeatPassLab, 0, 2);
-		
-		JLabel newUsernameLab = new JLabel("New username");
-		newUsernameLab.setForeground(ColorConstants.TEXT_COLOR_DARK);
-		newUsernameLab.setFont(DESCRIPTION_FONT);
+		gbc.insets.left = -147;
 		gbc.insets.bottom = 250;
-		addComponent(newUsernameLab, 0, 3);
+		addComponent(repeatPassLab, 0, 2);
 		
 		//text fields
 		gbc.insets = new Insets(10, 10, 10, 10);
 		
-		JTextField currentPassF = new JTextField();
+		this.currentPassF = new FocusField();
+		currentPassF.encode(true);
 		currentPassF.setPreferredSize(FIELD_DIM);
 		addComponent(currentPassF, 1, 0);
 		
-		JTextField newPassF = new JTextField();
+		this.newPassF = new FocusField("must contain 8-20 characters");
+		newPassF.encode(true);
 		newPassF.setPreferredSize(FIELD_DIM);
 		addComponent(newPassF, 1, 1);
 		
-		JTextField repeatPassF = new JTextField();
-		repeatPassF.setPreferredSize(FIELD_DIM);
-		addComponent(repeatPassF, 1, 2);
-
-		JTextField newUsernameF = new JTextField();
-		newUsernameF.setPreferredSize(FIELD_DIM);
+		this.repeatF = new FocusField("must contain 8-20 characters");
+		repeatF.encode(true);
+		repeatF.setPreferredSize(FIELD_DIM);
 		gbc.insets.bottom = 250;
-		addComponent(newUsernameF, 1, 3);
+		addComponent(repeatF, 1, 2);
 	}
 	
 	@Override
@@ -72,14 +73,41 @@ public class SettingsTab extends Tab
 	protected Color getTabColor() { return new Color(167, 54, 54); }
 
 	@Override
-	protected boolean addButtonFunction(boolean activate) { return false; }
+	protected void addButtonFunction() {}
 
 	@Override
-	protected boolean deleteButtonFunction(boolean activate) { return false; }
+	protected void deleteButtonFunction() {}
 
 	@Override
-	protected boolean saveButtonFunction(boolean activate) {
-		// TODO Auto-generated method stub
-		return true;
+	protected void saveButtonFunction() {
+		String currentPassword = User.getPass();
+		int messageType = JOptionPane.WARNING_MESSAGE;
+		String title = "";
+		String message = "Something went wrong. Please try again.";
+		
+		//verify current password
+		if (!currentPassF.getText().equals(currentPassword)) {
+			messageType = JOptionPane.ERROR_MESSAGE;
+			message = "Entered an incorrect password.";
+		}
+		
+		else if (!StringVerifier.verifyPassword(newPassF.getDecodedPassword(), 8, 20)) {
+			messageType = JOptionPane.ERROR_MESSAGE;
+			message = "New password must be between 8 and 20 characters.";
+		}
+		
+		else if (!newPassF.getDecodedPassword().equals(repeatF.getDecodedPassword())) {
+			messageType = JOptionPane.ERROR_MESSAGE;
+			message = "Please repeat your password again.";
+		}
+		
+		else if (User.changePassword(newPassF.getDecodedPassword())) {
+			messageType = JOptionPane.INFORMATION_MESSAGE;
+			message = "Your password was updated successfully.";
+			newPassF.clear();
+			repeatF.clear();
+		}
+		
+		JOptionPane.showMessageDialog(this, message, title, messageType, null);
 	}
 }

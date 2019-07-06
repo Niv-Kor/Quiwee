@@ -22,7 +22,6 @@ import javaNK.util.math.DimensionalHandler;
 public class Menu extends JPanel
 {
 	private static final long serialVersionUID = -2874727025893098043L;
-	private static final Color SELECTED_COLOR = ColorConstants.COLOR_2.brighter();
 	private static final String ICONS_PATH = "menu_icons/";
 	
 	private InteractiveIcon calendarIco, settingsIco, clientsIco, servicesIco, logoutIco;
@@ -44,7 +43,7 @@ public class Menu extends JPanel
 		this.calendarLab = new InteractiveLabel("Calendar");
 		calendarLab.setForeground(Color.WHITE);
 		calendarLab.setFont(FontConstants.SMALL_LABEL_FONT);
-		calendarLab.setSelectColor(SELECTED_COLOR);
+		calendarLab.setSelectColor(ColorConstants.COLOR_2.brighter());
 		calendarLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		calendarLab.mousePressed(null);
 		calendarLab.setFunction(new Callable<Void>() {
@@ -65,7 +64,7 @@ public class Menu extends JPanel
 		this.settingsLab = new InteractiveLabel("Settings");
 		settingsLab.setForeground(Color.WHITE);
 		settingsLab.setFont(FontConstants.SMALL_LABEL_FONT);
-		settingsLab.setSelectColor(SELECTED_COLOR);
+		settingsLab.setSelectColor(ColorConstants.COLOR_2.brighter());
 		settingsLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		settingsLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
@@ -85,7 +84,7 @@ public class Menu extends JPanel
 		this.clientsLab = new InteractiveLabel("Clients");
 		clientsLab.setForeground(Color.WHITE);
 		clientsLab.setFont(FontConstants.SMALL_LABEL_FONT);
-		clientsLab.setSelectColor(SELECTED_COLOR);
+		clientsLab.setSelectColor(ColorConstants.COLOR_2.brighter());
 		clientsLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		clientsLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
@@ -105,7 +104,7 @@ public class Menu extends JPanel
 		this.servicesLab = new InteractiveLabel("Services");
 		servicesLab.setForeground(Color.WHITE);
 		servicesLab.setFont(FontConstants.SMALL_LABEL_FONT);
-		servicesLab.setSelectColor(SELECTED_COLOR);
+		servicesLab.setSelectColor(ColorConstants.COLOR_2.brighter());
 		servicesLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		servicesLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {

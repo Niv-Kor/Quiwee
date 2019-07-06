@@ -52,12 +52,12 @@ public abstract class Tab extends JPanel
 	protected JTextPane textPane;
 	protected List<InteractiveIcon> buttonList;
 	
-	public Tab() {
+	public Tab(boolean addButton, boolean deleteButton, boolean saveButton) {
 		super(new BorderLayout());
 		setPreferredSize(DIM);
 		
 		this.gbc = new GridBagConstraints();
-		this.buttonList = getButtonList();
+		this.buttonList = getButtonList(addButton, deleteButton, saveButton);
 		
 		//north header panel
 		this.headerPanel = new JPanel(new BorderLayout());
@@ -113,11 +113,26 @@ public abstract class Tab extends JPanel
 		add(panel, BorderLayout.CENTER);
 	}
 	
+	/**
+	 * Add a component to the main customizable panel.
+	 * 
+	 * @param c - The component to add
+	 * @param x - value of X
+	 * @param y - value of Y
+	 */
 	protected void addComponent(Component c, int x, int y) {
 		addComponent(panel, c, x, y);
 	}
 	
-	protected void addComponent(JPanel panel, Component c, int x, int y) {
+	/**
+	 * Add a component to a panel in the tab.
+	 * 
+	 * @param panel - The panel to add a component to
+	 * @param c - The component to add
+	 * @param x - value of X
+	 * @param y - value of Y
+	 */
+	private void addComponent(JPanel panel, Component c, int x, int y) {
 		gbc.gridx = x;
 		gbc.gridy = y;
 		panel.add(c, gbc);
@@ -176,6 +191,9 @@ public abstract class Tab extends JPanel
 		}
 	}
 	
+	/**
+	 * Add the 'add', 'delete' and 'save' buttons to the tab.
+	 */
 	private void addButtons() {
 		//get the size of the list and return if it's 0
 		int buttonsAmount = buttonList.size();
@@ -205,19 +223,25 @@ public abstract class Tab extends JPanel
 		}
 	}
 	
-	private List<InteractiveIcon> getButtonList() {
+	/**
+	 * @param hasAdd - True if an 'add' button should appear in the tab
+	 * @param hasDelete - True if a 'delete' button should appear in the tab
+	 * @param hasSave - True if a 'save' button should appear in the tab
+	 * @return a list of the available buttons for the tab.
+	 */
+	private List<InteractiveIcon> getButtonList(boolean hasAdd, boolean hasDelete, boolean hasSave) {
 		List<InteractiveIcon> buttonList = new ArrayList<InteractiveIcon>();
 		ActionButton actionButton;
 		
 		//add button should appear
-		if (addButtonFunction(false)) {
+		if (hasAdd) {
 			actionButton = ActionButton.ADD;
 			InteractiveIcon addButton = new InteractiveIcon(actionButton.icon);
 			addButton.setHoverIcon(actionButton.hoverIcon);
 			addButton.setFunction(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					addButtonFunction(true);
+					addButtonFunction();
 					return null;
 				}
 			});
@@ -226,14 +250,14 @@ public abstract class Tab extends JPanel
 		}
 		
 		//delete button should appear
-		if (deleteButtonFunction(false)) {
+		if (hasDelete) {
 			actionButton = ActionButton.DELETE;
 			InteractiveIcon deleteButton = new InteractiveIcon(actionButton.icon);
 			deleteButton.setHoverIcon(actionButton.hoverIcon);
 			deleteButton.setFunction(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					deleteButtonFunction(true);
+					deleteButtonFunction();
 					return null;
 				}
 			});
@@ -242,14 +266,14 @@ public abstract class Tab extends JPanel
 		}
 		
 		//save button should appear
-		if (saveButtonFunction(false)) {
+		if (hasSave) {
 			actionButton = ActionButton.SAVE;
 			InteractiveIcon saveButton = new InteractiveIcon(actionButton.icon);
 			saveButton.setHoverIcon(actionButton.hoverIcon);
 			saveButton.setFunction(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					saveButtonFunction(true);
+					saveButtonFunction();
 					return null;
 				}
 			});
@@ -277,34 +301,16 @@ public abstract class Tab extends JPanel
 	
 	/**
 	 * The function to execute when clicking the add button.
-	 * Run the function itself only if the argument 'activate' is true,
-	 * otherwise, just return the boolean value that says if the button
-	 * should appear or not.
-	 * 
-	 * @param activate - True to activate the function itself
-	 * @return true if the button should appear on this tab, or false if it doesn't.
 	 */
-	protected abstract boolean addButtonFunction(boolean activate);
+	protected abstract void addButtonFunction();
 	
 	/**
 	 * The function to execute when clicking the delete button.
-	 * Run the function itself only if the argument 'activate' is true,
-	 * otherwise, just return the boolean value that says if the button
-	 * should appear or not.
-	 * 
-	 * @param activate - True to activate the function itself
-	 * @return true if the button should appear on the tab, or false if it doesn't.
 	 */
-	protected abstract boolean deleteButtonFunction(boolean activate);
+	protected abstract void deleteButtonFunction();
 	
 	/**
 	 * The function to execute when clicking the save button.
-	 * Run the function itself only if the argument 'activate' is true,
-	 * otherwise, just return the boolean value that says if the button
-	 * should appear or not.
-	 * 
-	 * @param activate - True to activate the function itself
-	 * @return true if the button should appear on the tab, or false if it doesn't.
 	 */
-	protected abstract boolean saveButtonFunction(boolean activate);
+	protected abstract void saveButtonFunction();
 }

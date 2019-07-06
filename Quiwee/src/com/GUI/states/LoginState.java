@@ -49,7 +49,7 @@ public class LoginState extends AuthenticationState
 	protected String getTitle() { return "Login"; }
 	
 	@Override
-	protected String getActionName() { return getTitle().toLowerCase(); }
+	protected String getActionName() { return "login"; }
 
 	@Override
 	protected ImageIcon getActionIcon() { return ImageHandler.loadIcon("sign_in.png"); }
