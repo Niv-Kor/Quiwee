@@ -24,9 +24,12 @@ public class StateManager
 			
 			private Window window;
 			
-			private ContainerWindow(Class<? extends Window> c) {
+			/**
+			 * @param cls - The Window's subclass
+			 */
+			private ContainerWindow(Class<? extends Window> cls) {
 				try {
-					this.window = c.asSubclass(Window.class).getConstructor().newInstance();
+					this.window = cls.asSubclass(Window.class).getConstructor().newInstance();
 					window.setVisible(false);
 				}
 				catch (Exception e) { e.printStackTrace(); }
@@ -37,12 +40,20 @@ public class StateManager
 		private ContainerWindow containerWindow;
 		private Class<? extends State> stateClass;
 		
-		private Substate(ContainerWindow container, Class<? extends State> c) {
+		/**
+		 * @param container - ContainerWindow window that's meant to contain the state
+		 * @param cls - The State's subclass
+		 */
+		private Substate(ContainerWindow container, Class<? extends State> cls) {
 			this.containerWindow = container;
 			this.window = container.window;
-			this.stateClass = c;
+			this.stateClass = cls;
 		}
 		
+		/**
+		 * @param state - The state to set
+		 * @param stateMap - Map of the already initialized states
+		 */
 		public static void setState(Substate state, Map<Class<? extends State>, State> stateMap) {
 			if (state == null) return;
 			
@@ -71,6 +82,9 @@ public class StateManager
 			return null;
 		}
 		
+		/**
+		 * @return the State's subclass.
+		 */
 		public Class<? extends State> getStateClass() { return stateClass; }
 	}
 	
@@ -86,6 +100,10 @@ public class StateManager
 		Substate.setState(substate, stateMap);
 	}
 	
+	/**
+	 * @param stateClass - The State's subclass
+	 * @return the state instance if it was already initialized, or null if it didn't.
+	 */
 	public static State getAppliedState(Class<? extends State> stateClass) {
 		return stateMap.get(stateClass);
 	}
