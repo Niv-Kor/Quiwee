@@ -1,6 +1,8 @@
 package com.main;
 import java.sql.SQLException;
 import java.util.List;
+import com.data.MysqlLoader;
+import javaNK.util.IO.StringVerifier;
 import javaNK.util.data.MysqlModifier;
 
 public class User
@@ -19,6 +21,7 @@ public class User
 				if (emails.get(i).equals(mail) && passes.get(i).equals(pass)) {
 					email = mail;
 					password = pass;
+					MysqlLoader.init(email);
 					return true;
 				}
 			}
@@ -34,7 +37,19 @@ public class User
 		email = null;
 		password = null;
 	}
-
+	
+	public static boolean changePassword(String newPass) {
+		if (!StringVerifier.verifyPassword(newPass, 8, 20)) return false;
+		else {
+			String query = "UPDATE users SET password = '" + newPass + "'";
+			try {
+				MysqlModifier.write(query);
+				return true;
+			}
+			catch (SQLException e) { return false; }
+		}
+	}
+	
 	public static boolean isLogged() { return email != null; }
 	public static String getKey() { return email; }
 	public static String getPass() { return password; }
