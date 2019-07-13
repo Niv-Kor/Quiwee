@@ -9,6 +9,8 @@ import java.awt.Insets;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,11 +23,12 @@ import javaNK.util.real_time.Week;
 public class CalendarTimeView extends JPanel
 {
 	private static final long serialVersionUID = 4429666829928454250L;
-	private final static Border BORDER = new EtchedBorder(EtchedBorder.LOWERED);
-	private final static int INDEX_THICKNESS = 40;
-	private final static Font DESELECTED_DAY = new Font("Aller Display", Font.PLAIN, 15);
-	private final static Font SELECTED_DAY = new Font("Aller Display", Font.BOLD, 15);
-	private final static Color QUEUE_COLOR = ColorConstants.COLOR_2;
+	private static final Border BORDER = new EtchedBorder(EtchedBorder.LOWERED);
+	private static final int HOURS = 24;
+	private static final int INDEX_THICKNESS = 40;
+	private static final Font DESELECTED_DAY = new Font("Aller Display", Font.PLAIN, 15);
+	private static final Font SELECTED_DAY = new Font("Aller Display", Font.BOLD, 15);
+	private static final Color QUEUE_COLOR = Color.BLACK;
 	
 	private static HashMap<String, CalendarGrid> grids = new HashMap<String, CalendarGrid>();
 	private GridBagConstraints gbc;
@@ -36,7 +39,20 @@ public class CalendarTimeView extends JPanel
 	private Dimension cellDim;
 	private int todayIndex, cols;
 	
-	public CalendarTimeView(int rows, int cols) {
+	/* Singleton objects */
+	private static final CalendarTimeView DAILY = new CalendarTimeView(1);
+	private static final CalendarTimeView WEEKLY = new CalendarTimeView(7);
+	
+	/* Storage of singletons */
+	@SuppressWarnings("unused")
+	private static boolean myLittleInitHack = init();
+	private static CalendarTimeView appliedView;
+	private static Set<CalendarTimeView> unappliedViews;
+	
+	/**
+	 * @param cols - Amount of days in the period
+	 */
+	private CalendarTimeView(int cols) {
 		super(new BorderLayout());
 		setBackground(Color.DARK_GRAY);
 		
@@ -55,7 +71,7 @@ public class CalendarTimeView extends JPanel
 		int tableLength = Tab.DIM.height * 2;
 		Dimension tableDim = new Dimension(Tab.DIM.width - INDEX_THICKNESS - scrollBarWidth - 20, tableLength);
 		Dimension indexDim = new Dimension(INDEX_THICKNESS, tableLength);
-		this.cellDim = new Dimension(tableDim.width / cols, tableDim.height / (rows * 2));
+		this.cellDim = new Dimension(tableDim.width / cols, tableDim.height / (HOURS * 2));
 		
 		calendarScroll.setPreferredSize(calendar.getPreferredSize());
 		
@@ -122,7 +138,7 @@ public class CalendarTimeView extends JPanel
 		gbc.gridx = 0;
 		int minutes;
 		
-		this.hourLabels = new HourPanel[rows * 2];
+		this.hourLabels = new HourPanel[HOURS * 2];
 		for (int i = 0, hour, j = 0, y = 0; i < hourLabels.length; i++, j++, y++) {
 			hour = j / 2;
 			
@@ -144,59 +160,120 @@ public class CalendarTimeView extends JPanel
 		gbc.ipadx = cellDim.width;
 		gbc.ipady = cellDim.height;
 
-		this.table = new CalendarGrid[rows * 2][cols];
+		this.table = new CalendarGrid[HOURS * 2][cols];
 		for (int i = 0, y = 0; i < table.length; i++, y++) {
 			for (int j = 0, x = 0; j < table[i].length; j++, x++) {
 				gbc.gridx = x;
 				gbc.gridy = y;
-				table[i][j] = requestGrid(fixDate(i, j, todayIndex, 0), i, j);
+				table[i][j] = getGrid(calculateGridDate(i, j, todayIndex, 0), i, j);
 				table[i][j].setPreferredSize(cellDim);
 				
 				//if today, brighten the color
-				Color color = new Color(221, 221, 221);
-				if (j == todayIndex && getCols() > 1) color = color.brighter();
+				if (j == todayIndex && getColumns() > 1)
+					table[i][j].setBackground(table[i][j].getBackground().brighter());
 				
-				table[i][j].setBackground(color);
 				tablePane.add(table[i][j], gbc);
 			}
 		}
 		add(calendarScroll, BorderLayout.CENTER);
 	}
 	
-	public void highlightHour(int hour) {
-		for (int i = 0; i < hourLabels.length; i++) {
-			if (i == hour) hourLabels[i].setForeground(ColorConstants.TEXT_COLOR_SELECTED);
-			else hourLabels[i].setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
-		}
+	/**
+	 * Initialize singleton objects.
+	 * 
+	 * @return some hackish value.
+	 */
+	private static boolean init() {
+		unappliedViews = new HashSet<CalendarTimeView>();
+		unappliedViews.add(DAILY);
+		unappliedViews.add(WEEKLY);
+		return true;
 	}
 	
-	public void highlightDay(int day) {
-		for (int i = 0; i < dayLabels.length; i++) {
-			if (i == day) dayLabels[i].setForeground(ColorConstants.TEXT_COLOR_SELECTED);
-			else if (i != todayIndex) dayLabels[i].setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
-			else dayLabels[i].setForeground(Color.CYAN);
-		}
-	}
-	
-	public void apply(JPanel menu, int addedWeeks) {
-		menu.add(dayIndex, BorderLayout.SOUTH);
+	/**
+	 * Calculate the date of a grid.
+	 * 
+	 * @param row - The row of the grid
+	 * @param col - The column of the grid
+	 * @param todayIndex - Index of today (where Sunday is 0)
+	 * @param addedWeeks - Amount of week added from today (or negative number if subtracted)
+	 * @return the date of the specified grid.
+	 */
+	private LocalDateTime calculateGridDate(int row, int col, int todayIndex, int addedWeeks) {
+		if (cols == 1) todayIndex = 0;
 		
+		LocalDateTime date = LocalDateTime.now().plusDays(col - todayIndex + addedWeeks * 7);
+		date = date.withHour(row / 2);
+		int minutes = (row % 2 == 0) ? 0 : 30;
+		date = date.withMinute(minutes);
+		
+		return date;
+	}
+	
+	/**
+	 * @return the amount of columns in the periodic view.
+	 */
+	public int getColumns() { return table[0].length; }
+	
+	/**
+	 * @return the panel of days.
+	 */
+	public JPanel getDayIndex() { return dayIndex; }
+	
+	/**
+	 * @param row - The row of the grid
+	 * @param col - The column of the grid
+	 * @return the grid at the selected location.
+	 */
+	public CalendarGrid getGrid(int row, int col) { return table[row][col]; }
+	
+	/**
+	 * Display the time view on the calendar tab.
+	 * 
+	 * @param menu - The menu panel
+	 * @param addedWeeks - amount of weeks added from today (or negative if subtracted)
+	 * @return true if the view changed.
+	 */
+	public boolean apply(JPanel menu, int addedWeeks) {
+		
+		//remove the previous index
+		if (appliedView != null) {
+			menu.remove(appliedView.dayIndex);
+			unappliedViews.add(appliedView);
+		}
+		
+		for (CalendarTimeView view : unappliedViews)
+			menu.remove(view.dayIndex);
+		
+		//apply the new index
+		unappliedViews.remove(this);
+		appliedView = this;
+		menu.add(dayIndex, BorderLayout.SOUTH);
+		updateGrids(addedWeeks);
+		
+		revalidate();
+		repaint();
+		return true;
+	}
+	
+	/**
+	 * Update the calendar grids according to the requested date.
+	 * 
+	 * @param addedWeeks - Amount of weeks added from today (or negative number if subtracted)
+	 */
+	private void updateGrids(int addedWeeks) {
 		tablePane.removeAll();
 		for (int i = 0, y = 0; i < table.length; i++, y++) {
 			for (int j = 0, x = 0; j < table[i].length; j++, x++) {
 				gbc.gridx = x;
 				gbc.gridy = y;
-				table[i][j] = requestGrid(fixDate(i, j, todayIndex, addedWeeks), i, j);
+				table[i][j] = getGrid(calculateGridDate(i, j, todayIndex, addedWeeks), i, j);
 				table[i][j].setPreferredSize(cellDim);
 				
 				if (!table[i][j].isOccupied()) {
 					//if today, brighten the color
-					Color color = new Color(221, 221, 221);
-					
-					if (j == todayIndex && addedWeeks == 0 && getCols() > 1)
-						color = color.brighter();
-					
-					table[i][j].setBackground(color);
+					if (j == todayIndex && addedWeeks == 0 && getColumns() > 1)
+						table[i][j].setBackground(table[i][j].getBackground().brighter());
 				}
 				
 				table[i][j].setBorder(BORDER);
@@ -208,36 +285,73 @@ public class CalendarTimeView extends JPanel
 		repaint();
 	}
 	
-	private LocalDateTime fixDate(int row, int col, int todayIndex, int addedWeeks) {
-		if (cols == 1) todayIndex = 0;
-		
-		LocalDateTime date = LocalDateTime.now().plusDays(col - todayIndex + addedWeeks * 7);
-		date = date.withHour(row / 2);
-		int minutes = (row % 2 == 0) ? 0 : 30;
-		date = date.withMinute(minutes);
-		
-		return date;
-	}
-	
-	public static CalendarGrid requestGrid(LocalDateTime tempDate, int row, int col) {
-		String dateStr = tempDate.getYear() + ":"
-					   + tempDate.getMonthValue() + ":"
-					   + tempDate.getDayOfMonth() + ":"
-					   + tempDate.getHour() + ":"
-					   + tempDate.getMinute();
+	/**
+	 * Get a grid of the calendar, that represents 30 minutes.
+	 * A grid points to the same object for all views.
+	 * 
+	 * @param date - The exact date of the grid (down to minutes)
+	 * @param row - The grid's row
+	 * @param col - The grid's column
+	 * @return the grid at the selected location.
+	 */
+	public static CalendarGrid getGrid(LocalDateTime date, int row, int col) {
+		String dateStr = date.getYear() + ":"
+					   + date.getMonthValue() + ":"
+					   + date.getDayOfMonth() + ":"
+					   + date.getHour() + ":"
+					   + date.getMinute();
 		
 		CalendarGrid cg = grids.get(dateStr);
 		
 		if (cg == null) {
-			cg = new CalendarGrid(tempDate, row, col);
+			cg = new CalendarGrid(date, row, col);
 			grids.put(dateStr, cg);
 		}
 		
 		return cg;
 	}
 	
-	public int getRows() { return table.length; }
-	public int getCols() { return table[0].length; }
-	public JPanel getDayIndex() { return dayIndex; }
-	public CalendarGrid getDatedPanel(int i, int j) { return table[i][j]; }
+	/**
+	 * Highlight the hour grid of both CalendarTimeView objects.
+	 * 
+	 * @param index - The index of the hour (row).
+	 * 				  Put -1 to turn off.
+	 */
+	public static void highlightHour(int index) {
+		for (int i = 0; i < appliedView.hourLabels.length; i++) {
+			if (i == index) appliedView.hourLabels[i].setForeground(ColorConstants.TEXT_COLOR_SELECTED);
+			else appliedView.hourLabels[i].setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
+		}
+	}
+	
+	/**
+	 * Highlight the day grid of both CalendarTimeView objects.
+	 * 
+	 * @param index - The index of the day (column).
+	 * 				  Put -1 to turn off.
+	 */
+	public static void highlightDay(int index) {
+		for (int i = 0; i < appliedView.dayLabels.length; i++) {
+			if (i == index)
+				appliedView.dayLabels[i].setForeground(ColorConstants.TEXT_COLOR_SELECTED);
+			else if (i != appliedView.todayIndex)
+				appliedView.dayLabels[i].setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
+			else
+				appliedView.dayLabels[i].setForeground(Color.CYAN);
+		}
+	}
+	
+	/**
+	 * Get a singleton CalendarTimeView object, displaying the calendar in bulks of days.
+	 * 
+	 * @return a daily calendar view.
+	 */
+	public static CalendarTimeView getDailyView() { return DAILY; }
+	
+	/**
+	 * Get a singleton CalendarTimeView object, displaying the calendar in bulks of weeks.
+	 * 
+	 * @return a weekly calendar view.
+	 */
+	public static CalendarTimeView getWeeklyView() { return WEEKLY; }
 }

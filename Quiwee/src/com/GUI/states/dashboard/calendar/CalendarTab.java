@@ -5,8 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +14,8 @@ import javax.swing.JPanel;
 import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
 import com.GUI.states.dashboard.Tab;
+import com.controllers.ClientsController;
+import com.controllers.Controller;
 import com.controllers.QueuesController;
 import com.data.MysqlLoader;
 import com.data.objects.Client;
@@ -24,6 +24,7 @@ import javaNK.util.GUI.swing.components.InteractiveIcon;
 import javaNK.util.GUI.swing.components.InteractiveLabel;
 import javaNK.util.math.DimensionalHandler;
 import javaNK.util.math.NumeralHandler;
+import javaNK.util.real_time.TimeStampConverter;
 
 public class CalendarTab extends JPanel
 {
@@ -203,7 +204,7 @@ public class CalendarTab extends JPanel
 		daily.setSelectColor(ColorConstants.COLOR_2.brighter());
 		daily.setFunction(new Callable<Void>() {
 			public Void call() {
-				setTimeView(TimePeriod.DAILY);
+				setTimeView(CalendarTimeView.getDailyView());
 				weekly.release();
 				return null;
 			}
@@ -216,10 +217,9 @@ public class CalendarTab extends JPanel
 		weekly.setFont(FontConstants.SMALL_LABEL_FONT);
 		weekly.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
 		weekly.setSelectColor(ColorConstants.COLOR_2.brighter());
-		weekly.mousePressed(null);
 		weekly.setFunction(new Callable<Void>() {
 			public Void call() {
-				setTimeView(TimePeriod.WEEKLY);
+				setTimeView(CalendarTimeView.getWeeklyView());
 				daily.release();
 				return null;
 			}
@@ -242,34 +242,41 @@ public class CalendarTab extends JPanel
 		viewSelector.add(centerPane, BorderLayout.CENTER);
 		menu.add(viewSelector, BorderLayout.NORTH);
 		add(menu, BorderLayout.NORTH);
-		setTimeView(TimePeriod.WEEKLY);
 		
-		try { importQueues(); }
-		catch (SQLException e) { e.printStackTrace(); }
+		//show weekly calendar view by default
+		weekly.mousePressed(null);
+		
+		importAllQueues();
 	}
 	
-	private void setTimeView(TimePeriod period) {
-		if (currentView == period.getTimeView()) return;
-		if (currentView != null) remove(currentView);
-		
-		currentView = period.apply(menu, currentDate.getAddedWeeks());
-		add(currentView, BorderLayout.CENTER);
-		revalidate();
-        repaint();
+	/**
+	 * Change the periodic view of the calendar.
+	 * 
+	 * @param timeView - The time period to display
+	 */
+	private void setTimeView(CalendarTimeView timeView) {
+		if (currentView == timeView) return;
+		else if (timeView.apply(menu, currentDate.getAddedWeeks())) {
+			if (currentView != null) remove(currentView);
+			currentView = timeView;
+			add(currentView, BorderLayout.CENTER);
+			revalidate();
+			repaint();
+		}
 	}
 	
-	private void importQueues() throws SQLException {
+	/**
+	 * Import all queues from the database to the calendar.
+	 */
+	private void importAllQueues() {
 		List<Object> clientPhoneNumber = MysqlLoader.pullAll(QueuesTable.CLIENT_PHONE);
 		List<Object> startTime = MysqlLoader.pullAll(QueuesTable.START_TIME);
+		Controller<Client> clientCont = new ClientsController();
 		
 		for (int i = 0; i < clientPhoneNumber.size(); i++) {
-			Client client;
-			LocalDateTime startTimeFormat = ((Timestamp) startTime.get(i)).toLocalDateTime();
-			
-			try { client = new Client((String) clientPhoneNumber.get(i)); }
-			catch (SQLException e) { continue; }
-			
-			controller.importQueue(client, startTimeFormat);
+			LocalDateTime startTimeFormat = TimeStampConverter.toLocalDateTime((String) startTime.get(i));
+			Client client = (Client) clientCont.getObj(clientPhoneNumber.get(i));
+			if (client != null) controller.importQueue(client, startTimeFormat);
 		}
 	}
 }
