@@ -1,6 +1,5 @@
 package com.GUI.constants;
 import java.awt.Color;
-import javaNK.util.math.RNG;
 
 public final class ColorConstants
 {

@@ -12,6 +12,10 @@ public class HourPanel extends JPanel
 	private String hourStr;
 	private Color foreground;
 	
+	/**
+	 * @param hour - The lable's hour
+	 * @param minutes - The label's minutes
+	 */
 	public HourPanel(int hour, int minutes) {
 		String hourExcess = (hour < 10) ? "0" : "";
 		String minuteExcess = (minutes < 10) ? "0" : "";
@@ -19,11 +23,13 @@ public class HourPanel extends JPanel
 		this.foreground = Color.BLACK;
 	}
 	
+	@Override
 	public void setForeground(Color c) {
 		super.setForeground(c);
 		foreground = c;
 	}
 	
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 	    g.setColor(foreground);
