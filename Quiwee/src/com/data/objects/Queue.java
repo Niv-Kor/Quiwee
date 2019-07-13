@@ -7,6 +7,7 @@ import com.data.MysqlLoader;
 import com.data.tables.QueuesTable;
 import com.main.User;
 import javaNK.util.data.MysqlRow;
+import javaNK.util.real_time.TimeStampConverter;
 
 public class Queue extends MysqlRow
 {
@@ -24,8 +25,9 @@ public class Queue extends MysqlRow
 			price = service.getPrice();
 		}
 		
-		setField(QueuesTable.SERVICE_NAME.getColumn(), serviceName);
-		setField(QueuesTable.START_TIME.getColumn(), Timestamp.valueOf(start));
+		setField(QueuesTable.START_TIME.getColumn(), TimeStampConverter.toString(start));
+		setServiceName(serviceName);
+		setConcluded(false);
 		setEndTime(end);
 		setPrice(price);
 		
@@ -34,22 +36,26 @@ public class Queue extends MysqlRow
 	
 	public Queue(Client client, LocalDateTime start) throws SQLException {
 		super("queues");
+		
 		setField(QueuesTable.CLIENT_PHONE.getColumn(), client.getPhoneNumber());
-		setField(QueuesTable.START_TIME.getColumn(), Timestamp.valueOf(start));
+		setField(QueuesTable.START_TIME.getColumn(), TimeStampConverter.toString(start));
 		
 		if (isInDatabase()) {
 			Object[][] rows = MysqlLoader.getRows(QueuesTable.class, selectAllQuery());
 			
 			setServiceName((String) rows[0][2]);
 			setPrice((double) rows[0][3]);
-			setEndTime(((Timestamp) rows[0][5]).toLocalDateTime());
+			setEndTime(TimeStampConverter.toLocalDateTime((String) rows[0][5]));
+			setConcluded((boolean) rows[0][6]);
 		}
 		else throw new SQLException();
 	}
 	
-	public void close(double price, boolean changed) {
+	public boolean conclude(double price) {
 		setPrice(price);
-		//TODO
+		setConcluded(true);
+		boolean save = save();
+		return save;
 	}
 	
 	private void calculateDuration() {
@@ -66,16 +72,19 @@ public class Queue extends MysqlRow
 		addLiquidField(QueuesTable.SERVICE_NAME.getColumn(), null);
 		addLiquidField(QueuesTable.PRICE.getColumn(), null);
 		addLiquidField(QueuesTable.END_TIME.getColumn(), null);
+		addLiquidField(QueuesTable.IS_CONCLUDED.getColumn(), null);
 	}
 	
 	public void setServiceName(String s) { setField(QueuesTable.SERVICE_NAME.getColumn(), s); }
 
 	public void setEndTime(LocalDateTime t) {
-		setField(QueuesTable.END_TIME.getColumn(), Timestamp.valueOf(t));
+		setField(QueuesTable.END_TIME.getColumn(), TimeStampConverter.toString(t));
 		calculateDuration();
 	}
 	
 	public void setPrice(double p) { setField(QueuesTable.PRICE.getColumn(), p); }
+	
+	public void setConcluded(boolean flag) { setField(QueuesTable.IS_CONCLUDED.getColumn(), flag); }
 	
 	public Client getClient() {
 		try { return new Client(getClientPhoneNumber()); }
@@ -96,11 +105,15 @@ public class Queue extends MysqlRow
 }
 	
 	public LocalDateTime getStartTime() {
-		return ((Timestamp) getField(QueuesTable.START_TIME.getColumn())).toLocalDateTime();
+		return TimeStampConverter.toLocalDateTime((String) getField(QueuesTable.START_TIME.getColumn()));
 	}
 	
 	public LocalDateTime getEndTime() {
-		return ((Timestamp) getField(QueuesTable.END_TIME.getColumn())).toLocalDateTime();
+		return TimeStampConverter.toLocalDateTime((String) getField(QueuesTable.END_TIME.getColumn()));
+	}
+	
+	public boolean isConcluded() {
+		return (boolean) getField(QueuesTable.IS_CONCLUDED.getColumn());
 	}
 	
 	public double getPrice() { return (double) getField(QueuesTable.PRICE.getColumn()); }

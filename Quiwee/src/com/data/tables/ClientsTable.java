@@ -13,7 +13,7 @@ public enum ClientsTable implements Pullable
 	CITY(new MysqlColumn("city", DataType.VARCHAR)),
 	STREET(new MysqlColumn("street", DataType.VARCHAR)),
 	STREET_NUM(new MysqlColumn("st_num", DataType.INTEGER)),
-	JOIN_DATE(new MysqlColumn("join_date", DataType.TIMESTAMP));
+	JOIN_DATE(new MysqlColumn("join_date", DataType.DATETIME));
 	
 	private MysqlColumn column;
 	private List<Object> list;

@@ -1,10 +1,11 @@
 package com.data.objects;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import com.data.MysqlLoader;
 import com.data.tables.ClientsTable;
 import com.main.User;
 import javaNK.util.data.MysqlRow;
+import javaNK.util.real_time.TimeStampConverter;
 
 public class Client extends MysqlRow
 {
@@ -17,7 +18,7 @@ public class Client extends MysqlRow
 		setCity(city);
 		setStreet(street);
 		setStreetNum(stNum);
-		setJoinDate(new Timestamp(System.currentTimeMillis()));
+		setJoinDate(LocalDateTime.now());
 	}
 	
 	public Client(String phone) throws SQLException {
@@ -32,7 +33,7 @@ public class Client extends MysqlRow
 			setCity((String) rows[0][4]);
 			setStreet((String) rows[0][5]);
 			setStreetNum((int) rows[0][6]);
-			setJoinDate((Timestamp) rows[0][7]);
+			setJoinDate(TimeStampConverter.toLocalDateTime((String) rows[0][7]));
 		}
 		else throw new SQLException();
 	}
@@ -59,7 +60,9 @@ public class Client extends MysqlRow
 	
 	public void setStreetNum(Integer num) { setField(ClientsTable.STREET_NUM.getColumn(), num); }
 	
-	public void setJoinDate(Timestamp t) { setField(ClientsTable.JOIN_DATE.getColumn(), t); }
+	public void setJoinDate(LocalDateTime t) {
+		setField(ClientsTable.JOIN_DATE.getColumn(), TimeStampConverter.toString(t));
+	}
 	
 	public String getName() { return (String) getField(ClientsTable.NAME.getColumn()); }
 	
@@ -73,7 +76,9 @@ public class Client extends MysqlRow
 	
 	public int getStreetNum() { return (int) getField(ClientsTable.STREET_NUM.getColumn()); }
 	
-	public Timestamp getJoinDate() { return (Timestamp) getField(ClientsTable.JOIN_DATE.getColumn()); }
+	public LocalDateTime getJoinDate() {
+		return TimeStampConverter.toLocalDateTime((String) getField(ClientsTable.JOIN_DATE.getColumn()));
+	}
 	
 	public String getID() { return getPhoneNumber(); }
 }
