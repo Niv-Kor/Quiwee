@@ -1,4 +1,5 @@
 package com.controllers;
+import com.data.Pullable;
 import javaNK.util.data.MysqlRow;
 
 public abstract class Controller<T extends MysqlRow>
@@ -26,7 +27,7 @@ public abstract class Controller<T extends MysqlRow>
 	 * This depends on whether the object can be found in the database or not.
 	 * 
 	 * @param args - All arguments of the object's constructor
-	 * @return the created object.
+	 * @return true if the object was updated successfully in the database.
 	 */
 	public boolean insertNew(Object... args) {
 		return save(createObj(args));
@@ -79,4 +80,13 @@ public abstract class Controller<T extends MysqlRow>
 		try { return obj.save(); }
 		catch (NullPointerException ex) { return false; }
 	}
+	
+	/**
+	 * Get rows from the database that contain the keyword.
+	 * 
+	 * @param keyword - A search word
+	 * @param fields - The fields that need to contain the keyword
+	 * @return rows from the database that contain the keyword.
+	 */
+	public abstract Object[][] getkeywordResults(String keyword, Pullable... fields);
 }

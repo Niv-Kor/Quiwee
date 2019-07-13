@@ -1,6 +1,9 @@
 package com.controllers;
 import java.sql.SQLException;
+import com.data.MysqlLoader;
+import com.data.Pullable;
 import com.data.objects.Client;
+import com.data.tables.ClientsTable;
 
 /**
  * This class controls and manages clients in the database.
@@ -41,5 +44,10 @@ public class ClientsController extends Controller<Client>
 			return new Client(name, phone, country, city, street, stNum);
 		}
 		catch (ClassCastException | ArrayIndexOutOfBoundsException ex) { return null; }
+	}
+
+	@Override
+	public Object[][] getkeywordResults(String keyword, Pullable... fields) {
+		return MysqlLoader.getKeywordRows(ClientsTable.class, keyword, fields);
 	}
 }

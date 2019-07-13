@@ -3,9 +3,12 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import com.GUI.states.dashboard.calendar.CalendarGrid;
 import com.GUI.states.dashboard.calendar.CalendarTimeView;
+import com.data.MysqlLoader;
+import com.data.Pullable;
 import com.data.objects.Client;
 import com.data.objects.Queue;
 import com.data.objects.Service;
+import com.data.tables.QueuesTable;
 
 /**
  * This class controls and manages queues in the database.
@@ -42,9 +45,9 @@ public class QueuesController extends Controller<Queue>
 			LocalDateTime start = (LocalDateTime) obj[2];
 			LocalDateTime end = (LocalDateTime) obj[3];
 			
-			Queue queue = new Queue(client, service, start, end);
 			CalendarGrid grid = getGrid(start);
-			grid.addQueue(queue, queue.getDuration());
+			Queue queue = new Queue(client, service, start, end);
+			if (!grid.isOccupied()) grid.addQueue(queue);
 			
 			return queue;
 		}
@@ -62,7 +65,7 @@ public class QueuesController extends Controller<Queue>
 		try {
 			CalendarGrid grid = getGrid(start);
 			Queue queue = getObj(client, start);
-			grid.addQueue(queue, queue.getDuration());
+			grid.addQueue(queue);
 			return true;
 		}
 		catch (NullPointerException ex) { return false; }
@@ -82,6 +85,19 @@ public class QueuesController extends Controller<Queue>
 		
 		if (deleted) removeFromCalendar((LocalDateTime) obj[1]);
 		return deleted;
+	}
+	
+	public boolean conclude(Queue q, double payment) {
+		if (q == null || payment < 0) return false;
+		else {
+			if (q.conclude(payment)) {
+				CalendarGrid grid = getGrid(q.getStartTime());
+				grid.concludeQueue();
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -104,6 +120,11 @@ public class QueuesController extends Controller<Queue>
 		int column = startTime.getDayOfWeek().getValue();
 		if (column == 7) column = 0; //sunday
 		
-		return CalendarTimeView.requestGrid(startTime, row, column);
+		return CalendarTimeView.getGrid(startTime, row, column);
+	}
+	
+	@Override
+	public Object[][] getkeywordResults(String keyword, Pullable... fields) {
+		return MysqlLoader.getKeywordRows(QueuesTable.class, keyword, fields);
 	}
 }
