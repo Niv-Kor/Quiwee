@@ -1,8 +1,8 @@
 package com.data.tables;
 import java.util.List;
 import com.data.Pullable;
-import javaNK.util.data.DataType;
-import javaNK.util.data.MysqlColumn;
+import com.util.data.DataType;
+import com.util.data.MysqlColumn;
 
 public enum ServicesTable implements Pullable
 {

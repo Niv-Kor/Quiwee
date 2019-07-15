@@ -1,6 +1,6 @@
 package com.controllers;
 import com.data.Pullable;
-import javaNK.util.data.MysqlRow;
+import com.util.data.MysqlRow;
 
 public abstract class Controller<T extends MysqlRow>
 {

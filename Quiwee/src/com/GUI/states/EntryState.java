@@ -7,18 +7,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.Callable;
-
 import javax.swing.JLabel;
-
 import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
 import com.GUI.states.StateManager.Substate;
-
-import javaNK.util.GUI.swing.components.InteractiveLabel;
-import javaNK.util.GUI.swing.containers.Window;
-import javaNK.util.GUI.swing.state_management.State;
-import javaNK.util.files.ImageHandler;
-import javaNK.util.math.DimensionalHandler;
+import com.util.GUI.swing.components.InteractiveLabel;
+import com.util.GUI.swing.containers.Window;
+import com.util.GUI.swing.state_management.State;
+import com.util.files.ImageHandler;
+import com.util.math.DimensionalHandler;
 
 public class EntryState extends State
 {

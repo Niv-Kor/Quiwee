@@ -1,12 +1,9 @@
 package com.GUI.windows;
 import java.awt.Color;
 import java.awt.Dimension;
-
 import javax.swing.JFrame;
-
 import com.GUI.constants.ColorConstants;
-
-import javaNK.util.GUI.swing.containers.Window;
+import com.util.GUI.swing.containers.Window;
 
 public class MainWindow extends Window
 {

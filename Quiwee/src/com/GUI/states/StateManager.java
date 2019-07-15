@@ -1,14 +1,11 @@
 package com.GUI.states;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.GUI.states.dashboard.Dashboard;
 import com.GUI.windows.AuthenticationWindow;
 import com.GUI.windows.MainWindow;
-
-import javaNK.util.GUI.swing.containers.Window;
-import javaNK.util.GUI.swing.state_management.State;
-import javaNK.util.debugging.Logger;
+import com.util.GUI.swing.containers.Window;
+import com.util.GUI.swing.state_management.State;
 
 public class StateManager
 {
@@ -78,7 +75,7 @@ public class StateManager
 		private State createInstance() {
 			//create instance
 			try { return stateClass.asSubclass(State.class).getConstructor(Window.class).newInstance(window); }
-			catch (Exception e) { Logger.error("Cannot create an instance of class " + stateClass.getName()); }
+			catch (Exception e) { System.err.println("Cannot create an instance of class " + stateClass.getName()); }
 			return null;
 		}
 		

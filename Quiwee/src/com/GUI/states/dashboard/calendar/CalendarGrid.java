@@ -22,8 +22,8 @@ public class CalendarGrid extends JPanel implements MouseListener
 	private static final long serialVersionUID = 3709458352878645312L;
 	private static final Border BORDER = new EtchedBorder(EtchedBorder.LOWERED);
 	private static final Color BASE_COLOR = new Color(221, 221, 221);
-	private static final Color CONCLUSION_COLOR = new Color(217, 95, 57);
-	private static final Color PRESSED_COLOR = new Color(24, 103, 149);
+	private static final Color CONCLUSION_COLOR = new Color(76, 185, 46);
+	private static final Color PRESSED_COLOR = new Color(235, 121, 29);
 	private static final Color HOVER_COLOR = ColorConstants.TEXT_COLOR_SELECTED;
 	
 	private static boolean handleDialog;
@@ -160,7 +160,6 @@ public class CalendarGrid extends JPanel implements MouseListener
 		int rows = q.getDuration() / 30;
 		CalendarGridGroup group = group(rows, 1);
 		group.addQueue(q);
-		System.out.println("added queue from grid");
 	}
 	
 	/**

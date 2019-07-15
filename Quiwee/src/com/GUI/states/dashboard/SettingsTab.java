@@ -6,8 +6,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import com.GUI.constants.ColorConstants;
 import com.main.User;
-import javaNK.util.GUI.swing.components.FocusField;
-import javaNK.util.IO.StringVerifier;
+import com.util.GUI.swing.components.FocusField;
+import com.util.IO.StringVerifier;
 
 public class SettingsTab extends Tab
 {

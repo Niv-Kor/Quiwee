@@ -1,9 +1,9 @@
 package com.main;
 import java.sql.SQLException;
 import java.util.List;
-import com.data.MysqlLoader;
-import javaNK.util.IO.StringVerifier;
-import javaNK.util.data.MysqlModifier;
+import com.data.MysqlPuller;
+import com.util.IO.StringVerifier;
+import com.util.data.MysqlModifier;
 
 public class User
 {
@@ -21,7 +21,7 @@ public class User
 				if (emails.get(i).equals(mail) && passes.get(i).equals(pass)) {
 					email = mail;
 					password = pass;
-					MysqlLoader.init(email);
+					MysqlPuller.init(email);
 					return true;
 				}
 			}

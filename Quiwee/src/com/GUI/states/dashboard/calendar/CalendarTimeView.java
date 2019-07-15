@@ -18,8 +18,13 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import com.GUI.constants.ColorConstants;
 import com.GUI.states.dashboard.Tab;
-import javaNK.util.real_time.Week;
+import com.util.real_time.Week;
 
+/**
+ * A singleton class, providing two objects:
+ * 		1. Daily calendar view
+ * 		2. Weekly calendar view 
+ */
 public class CalendarTimeView extends JPanel
 {
 	private static final long serialVersionUID = 4429666829928454250L;
@@ -176,18 +181,6 @@ public class CalendarTimeView extends JPanel
 			}
 		}
 		add(calendarScroll, BorderLayout.CENTER);
-	}
-	
-	/**
-	 * Initialize singleton objects.
-	 * 
-	 * @return some hackish value.
-	 */
-	private static boolean init() {
-		unappliedViews = new HashSet<CalendarTimeView>();
-		unappliedViews.add(DAILY);
-		unappliedViews.add(WEEKLY);
-		return true;
 	}
 	
 	/**
@@ -354,4 +347,16 @@ public class CalendarTimeView extends JPanel
 	 * @return a weekly calendar view.
 	 */
 	public static CalendarTimeView getWeeklyView() { return WEEKLY; }
+	
+	/**
+	 * Initialize singleton objects.
+	 * 
+	 * @return garbage value.
+	 */
+	private static boolean init() {
+		unappliedViews = new HashSet<CalendarTimeView>();
+		unappliedViews.add(DAILY);
+		unappliedViews.add(WEEKLY);
+		return true;
+	}
 }

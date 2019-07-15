@@ -4,10 +4,10 @@ import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import com.GUI.states.StateManager.Substate;
 import com.main.User;
-import javaNK.util.GUI.swing.containers.Window;
-import javaNK.util.IO.StringVerifier;
-import javaNK.util.data.MysqlModifier;
-import javaNK.util.files.ImageHandler;
+import com.util.GUI.swing.containers.Window;
+import com.util.IO.StringVerifier;
+import com.util.data.MysqlModifier;
+import com.util.files.ImageHandler;
 
 public class RegisterState extends AuthenticationState
 {

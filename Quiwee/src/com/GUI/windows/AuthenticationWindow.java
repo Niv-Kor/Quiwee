@@ -1,10 +1,8 @@
 package com.GUI.windows;
 import java.awt.Color;
 import java.awt.Dimension;
-
 import com.GUI.constants.ColorConstants;
-
-import javaNK.util.GUI.swing.containers.Window;
+import com.util.GUI.swing.containers.Window;
 
 public class AuthenticationWindow extends Window
 {

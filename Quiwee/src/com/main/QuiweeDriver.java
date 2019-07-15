@@ -2,11 +2,10 @@ package com.main;
 import java.sql.SQLException;
 import com.GUI.states.StateManager;
 import com.GUI.states.StateManager.Substate;
-import javaNK.util.data.MysqlConnection;
-import javaNK.util.data.MysqlModifier;
-import javaNK.util.debugging.Logger;
+import com.util.data.MysqlConnection;
+import com.util.data.MysqlModifier;
 
-public class Main {
+public class QuiweeDriver {
 	public static void main(String[] args) {
 		//connect to database
 		String host = "sql7.freemysqlhosting.net";
@@ -18,7 +17,7 @@ public class Main {
 			MysqlModifier.connect(connection);
 		}
 		catch (SQLException e) {
-			Logger.error("Unable to establish a connection to the data base.");
+			System.err.println("Unable to establish a connection to the data base.");
 			return;
 		}
 		

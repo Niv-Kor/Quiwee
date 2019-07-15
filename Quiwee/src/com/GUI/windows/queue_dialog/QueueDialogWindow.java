@@ -42,9 +42,9 @@ import com.data.objects.Client;
 import com.data.objects.Queue;
 import com.data.objects.Service;
 import com.finance.CashRegister;
-import javaNK.util.GUI.swing.components.FocusField;
-import javaNK.util.GUI.swing.components.InteractiveLabel;
-import javaNK.util.math.DimensionalHandler;
+import com.util.GUI.swing.components.FocusField;
+import com.util.GUI.swing.components.InteractiveLabel;
+import com.util.math.DimensionalHandler;
 
 public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 {
@@ -82,7 +82,7 @@ public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 		this.endTime = date.plusMinutes(30);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.setFocusable(false);
+		mainPanel.setFocusable(true);
 		mainPanel.requestFocus();
 		mainPanel.setPreferredSize(DIM);
 		mainPanel.setBackground(ColorConstants.BASE_COLOR);
@@ -101,7 +101,7 @@ public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 		
 		JPanel southPane = new JPanel(new BorderLayout());
 		southPane.setPreferredSize(DimensionalHandler.adjust(DIM, 100, 50));
-		southPane.setOpaque(false);
+		southPane.setBackground(ColorConstants.BASE_COLOR);
 		createSouthPane(southPane);
 		mainPanel.add(southPane, BorderLayout.SOUTH);
 		
@@ -155,7 +155,7 @@ public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 		//search field and button
 		FocusField searchField = new FocusField(SEARCH_MESSAGE);
 		searchField.setPreferredSize(searchFieldDim);
-		searchField.setHorizontalAlignment(JTextField.CENTER);
+		searchField.setHorizontalAlignment(JTextField.LEFT);
 		gridConstraints.insets.top = 10;
 		addComponent(panel, searchField, 0, 0);
 		
@@ -393,14 +393,14 @@ public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 		//buttons panel
 		this.buttonsPane = new JPanel(new GridBagLayout());
 		buttonsPane.setPreferredSize(DimensionalHandler.adjust(panel, 100, 40));
-		buttonsPane.setOpaque(false);
+		buttonsPane.setBackground(ColorConstants.COLOR_3);
 		panel.add(buttonsPane, BorderLayout.SOUTH);
 		
 		//queue creation button
 		InteractiveLabel saveBtn = new InteractiveLabel("Save");
 		saveBtn.setPreferredSize(new Dimension(90, 20));
 		saveBtn.setFont(FontConstants.SMALL_LABEL_FONT);
-		saveBtn.setForeground(ColorConstants.TEXT_COLOR_DARK);
+		saveBtn.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
 		saveBtn.enableSelectionColor(false);
 		saveBtn.setFunction(new Callable<Void>() {
 			@Override
@@ -484,7 +484,7 @@ public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 		InteractiveLabel deleteQueueBtn = new InteractiveLabel("Delete");
 		deleteQueueBtn.setPreferredSize(new Dimension(90, 20));
 		deleteQueueBtn.setFont(FontConstants.SMALL_LABEL_FONT);
-		deleteQueueBtn.setForeground(ColorConstants.TEXT_COLOR_DARK);
+		deleteQueueBtn.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
 		deleteQueueBtn.enableSelectionColor(false);
 		deleteQueueBtn.setFunction(new Callable<Void>() {
 			@Override
@@ -500,7 +500,7 @@ public class QueueDialogWindow extends JFrame implements PropertyChangeListener
 		InteractiveLabel concludeQueueBtn = new InteractiveLabel("Conclude");
 		concludeQueueBtn.setPreferredSize(new Dimension(90, 20));
 		concludeQueueBtn.setFont(FontConstants.SMALL_LABEL_FONT);
-		concludeQueueBtn.setForeground(ColorConstants.TEXT_COLOR_DARK);
+		concludeQueueBtn.setForeground(ColorConstants.TEXT_COLOR_BRIGHT);
 		concludeQueueBtn.enableSelectionColor(false);
 		JFrame currentFrame = this;
 		concludeQueueBtn.setFunction(new Callable<Void>() {

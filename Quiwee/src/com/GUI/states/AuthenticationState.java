@@ -13,14 +13,12 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.border.MatteBorder;
-
 import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
-
-import javaNK.util.GUI.swing.components.FocusField;
-import javaNK.util.GUI.swing.containers.Window;
-import javaNK.util.GUI.swing.state_management.State;
-import javaNK.util.math.DimensionalHandler;
+import com.util.GUI.swing.components.FocusField;
+import com.util.GUI.swing.containers.Window;
+import com.util.GUI.swing.state_management.State;
+import com.util.math.DimensionalHandler;
 
 public abstract class AuthenticationState extends State
 {

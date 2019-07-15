@@ -1,7 +1,7 @@
 package com.GUI.constants;
 import java.awt.Font;
-import javaNK.util.files.FontHandler;
-import javaNK.util.files.FontHandler.FontStyle;
+import com.util.files.FontHandler;
+import com.util.files.FontHandler.FontStyle;
 
 public final class FontConstants
 {

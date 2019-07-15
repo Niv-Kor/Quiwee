@@ -1,6 +1,6 @@
 package com.controllers;
 import java.sql.SQLException;
-import com.data.MysqlLoader;
+import com.data.MysqlPuller;
 import com.data.Pullable;
 import com.data.objects.Client;
 import com.data.tables.ClientsTable;
@@ -48,6 +48,6 @@ public class ClientsController extends Controller<Client>
 
 	@Override
 	public Object[][] getkeywordResults(String keyword, Pullable... fields) {
-		return MysqlLoader.getKeywordRows(ClientsTable.class, keyword, fields);
+		return MysqlPuller.pullKeywordRows(ClientsTable.class, keyword, fields);
 	}
 }

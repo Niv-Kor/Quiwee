@@ -12,21 +12,18 @@ import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextPane;
-
 import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
 import com.GUI.windows.MainWindow;
-
-import javaNK.util.GUI.swing.components.InteractiveIcon;
-import javaNK.util.files.FontHandler;
-import javaNK.util.files.FontHandler.FontStyle;
-import javaNK.util.files.ImageHandler;
-import javaNK.util.math.DimensionalHandler;
+import com.util.GUI.swing.components.InteractiveIcon;
+import com.util.files.FontHandler;
+import com.util.files.FontHandler.FontStyle;
+import com.util.files.ImageHandler;
+import com.util.math.DimensionalHandler;
 
 public abstract class Tab extends JPanel
 {

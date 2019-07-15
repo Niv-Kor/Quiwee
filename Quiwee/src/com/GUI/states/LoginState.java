@@ -3,8 +3,8 @@ import java.awt.Insets;
 import javax.swing.ImageIcon;
 import com.GUI.states.StateManager.Substate;
 import com.main.User;
-import javaNK.util.GUI.swing.containers.Window;
-import javaNK.util.files.ImageHandler;
+import com.util.GUI.swing.containers.Window;
+import com.util.files.ImageHandler;
 
 public class LoginState extends AuthenticationState
 {

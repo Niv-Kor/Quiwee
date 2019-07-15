@@ -1,9 +1,11 @@
 package com.controllers;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import com.GUI.states.StateManager;
+import com.GUI.states.dashboard.Dashboard;
 import com.GUI.states.dashboard.calendar.CalendarGrid;
 import com.GUI.states.dashboard.calendar.CalendarTimeView;
-import com.data.MysqlLoader;
+import com.data.MysqlPuller;
 import com.data.Pullable;
 import com.data.objects.Client;
 import com.data.objects.Queue;
@@ -45,11 +47,15 @@ public class QueuesController extends Controller<Queue>
 			LocalDateTime start = (LocalDateTime) obj[2];
 			LocalDateTime end = (LocalDateTime) obj[3];
 			
-			CalendarGrid grid = getGrid(start);
 			Queue queue = new Queue(client, service, start, end);
-			if (!grid.isOccupied()) grid.addQueue(queue);
 			
-			return queue;
+			//check if the queue overrides another one
+			if (!queue.isConflicted()) {
+				CalendarGrid grid = getGrid(start);
+				if (!grid.isOccupied()) grid.addQueue(queue);
+				return queue;
+			}
+			else return null;
 		}
 		catch (ClassCastException | ArrayIndexOutOfBoundsException ex) { return null; }
 	}
@@ -93,6 +99,11 @@ public class QueuesController extends Controller<Queue>
 			if (q.conclude(payment)) {
 				CalendarGrid grid = getGrid(q.getStartTime());
 				grid.concludeQueue();
+				
+				//update the revenue graph
+				Dashboard dashboard = (Dashboard) StateManager.getAppliedState(Dashboard.class);
+				if (dashboard != null) dashboard.updateRevenue();
+				
 				return true;
 			}
 		}
@@ -125,6 +136,6 @@ public class QueuesController extends Controller<Queue>
 	
 	@Override
 	public Object[][] getkeywordResults(String keyword, Pullable... fields) {
-		return MysqlLoader.getKeywordRows(QueuesTable.class, keyword, fields);
+		return MysqlPuller.pullKeywordRows(QueuesTable.class, keyword, fields);
 	}
 }

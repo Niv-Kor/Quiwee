@@ -22,7 +22,7 @@ import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
 import com.controllers.Controller;
 import com.main.User;
-import javaNK.util.data.MysqlModifier;
+import com.util.data.MysqlModifier;
 
 public abstract class DatabaseTab extends Tab
 {

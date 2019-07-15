@@ -13,19 +13,19 @@ import com.GUI.constants.ColorConstants;
 import com.GUI.constants.FontConstants;
 import com.GUI.states.StateManager;
 import com.GUI.states.StateManager.Substate;
-import com.GUI.states.dashboard.Dashboard.Tabs;
-import javaNK.util.GUI.swing.components.InteractiveIcon;
-import javaNK.util.GUI.swing.components.InteractiveLabel;
-import javaNK.util.files.ImageHandler;
-import javaNK.util.math.DimensionalHandler;
+import com.GUI.states.dashboard.Dashboard.DashboardTab;
+import com.util.GUI.swing.components.InteractiveIcon;
+import com.util.GUI.swing.components.InteractiveLabel;
+import com.util.files.ImageHandler;
+import com.util.math.DimensionalHandler;
 
 public class Menu extends JPanel
 {
 	private static final long serialVersionUID = -2874727025893098043L;
 	private static final String ICONS_PATH = "menu_icons/";
 	
-	private InteractiveIcon calendarIco, settingsIco, clientsIco, servicesIco, logoutIco;
-	private InteractiveLabel calendarLab, settingsLab, clientsLab, servicesLab, logoutLab;
+	private InteractiveIcon calendarIco, settingsIco, clientsIco, servicesIco, revenueIco, logoutIco;
+	private InteractiveLabel calendarLab, settingsLab, clientsLab, servicesLab, revenueLab, logoutLab;
 	private GridBagConstraints gbc;
 
 	public Menu(Dashboard dashboard, Dimension dim) {
@@ -48,12 +48,12 @@ public class Menu extends JPanel
 		calendarLab.mousePressed(null);
 		calendarLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
-				dashboard.setTab(Tabs.CALENDAR);
+				dashboard.setTab(DashboardTab.CALENDAR);
 				calendarLab.select();
 				settingsLab.release();
 				servicesLab.release();
 				clientsLab.release();
-				logoutLab.release();
+				revenueLab.release();
 				return null;
 			}
 		});
@@ -68,17 +68,17 @@ public class Menu extends JPanel
 		settingsLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		settingsLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
-				dashboard.setTab(Tabs.SETTINGS);
+				dashboard.setTab(DashboardTab.SETTINGS);
 				settingsLab.select();
 				calendarLab.release();
 				servicesLab.release();
 				clientsLab.release();
-				logoutLab.release();
+				revenueLab.release();
 				return null;
 			}
 		});
 		
-		gbc.insets = new Insets(16, -13, 10, 10);
+		gbc.insets = new Insets(17, -13, 10, 10);
 		addComponent(labelsPane, settingsLab, 0, 1);
 		
 		this.clientsLab = new InteractiveLabel("Clients");
@@ -88,17 +88,17 @@ public class Menu extends JPanel
 		clientsLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		clientsLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
-				dashboard.setTab(Tabs.CLIENTS);
+				dashboard.setTab(DashboardTab.CLIENTS);
 				clientsLab.select();
 				calendarLab.release();
 				settingsLab.release();
 				servicesLab.release();
-				logoutLab.release();
+				revenueLab.release();
 				return null;
 			}
 		});
 		
-		gbc.insets = new Insets(16, -24, 10, 10);
+		gbc.insets = new Insets(17, -24, 10, 10);
 		addComponent(labelsPane, clientsLab, 0, 2);
 		
 		this.servicesLab = new InteractiveLabel("Services");
@@ -108,18 +108,38 @@ public class Menu extends JPanel
 		servicesLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
 		servicesLab.setFunction(new Callable<Void>() {
 			public Void call() throws Exception {
-				dashboard.setTab(Tabs.SERVICES);
+				dashboard.setTab(DashboardTab.SERVICES);
 				servicesLab.select();
 				calendarLab.release();
 				settingsLab.release();
 				clientsLab.release();
-				logoutLab.release();
+				revenueLab.release();
 				return null;
 			}
 		});
 		
-		gbc.insets = new Insets(16, -11, 10, 10);
+		gbc.insets = new Insets(17, -11, 10, 10);
 		addComponent(labelsPane, servicesLab, 0, 3);
+		
+		this.revenueLab = new InteractiveLabel("Revenue");
+		revenueLab.setForeground(Color.WHITE);
+		revenueLab.setFont(FontConstants.SMALL_LABEL_FONT);
+		revenueLab.setSelectColor(ColorConstants.COLOR_2.brighter());
+		revenueLab.setHoverColor(ColorConstants.TEXT_COLOR_SELECTED);
+		revenueLab.setFunction(new Callable<Void>() {
+			public Void call() throws Exception {
+				dashboard.setTab(DashboardTab.REVENUE);
+				revenueLab.select();
+				calendarLab.release();
+				settingsLab.release();
+				servicesLab.release();
+				clientsLab.release();
+				return null;
+			}
+		});
+		
+		gbc.insets = new Insets(17, -11, 10, 10);
+		addComponent(labelsPane, revenueLab, 0, 4);
 		
 		this.logoutLab = new InteractiveLabel("Log out");
 		logoutLab.setForeground(Color.WHITE);
@@ -132,8 +152,8 @@ public class Menu extends JPanel
 			}
 		});
 		
-		gbc.insets = new Insets(430, 0, 20, 10);
-		addComponent(labelsPane, logoutLab, 0, 4);
+		gbc.insets = new Insets(380, 0, 20, 10);
+		addComponent(labelsPane, logoutLab, 0, 5);
 		
 		//west icons pane
 		JPanel iconsPane = new JPanel(new GridBagLayout());
@@ -159,10 +179,14 @@ public class Menu extends JPanel
 		servicesIco.setFunction(servicesLab.getFunction());
 		addComponent(iconsPane, servicesIco, 0, 3);
 		
+		this.revenueIco = new InteractiveIcon(ImageHandler.loadIcon(ICONS_PATH + "revenue.png"));
+		revenueIco.setFunction(revenueLab.getFunction());
+		addComponent(iconsPane, revenueIco, 0, 4);
+		
 		this.logoutIco = new InteractiveIcon(ImageHandler.loadIcon(ICONS_PATH + "logout.png"));
 		logoutIco.setFunction(logoutLab.getFunction());
-		gbc.insets = new Insets(420, 20, 20, 10);
-		addComponent(iconsPane, logoutIco, 0, 4);
+		gbc.insets = new Insets(370, 20, 20, 10);
+		addComponent(iconsPane, logoutIco, 0, 5);
 	}
 	
 	private void addComponent(JPanel panel, Component c, int x, int y) {

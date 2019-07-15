@@ -1,8 +1,8 @@
 package com.data.tables;
 import java.util.List;
 import com.data.Pullable;
-import javaNK.util.data.DataType;
-import javaNK.util.data.MysqlColumn;
+import com.util.data.DataType;
+import com.util.data.MysqlColumn;
 
 public enum ClientsTable implements Pullable
 {
@@ -22,8 +22,10 @@ public enum ClientsTable implements Pullable
 		this.column = column;
 	}
 	
+	@Override
 	public List<Object> getList() { return list; }
 	
+	@Override
 	public void setList(List<Object> l) { list = l; }
 
 	@Override
